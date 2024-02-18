@@ -1,0 +1,43 @@
+:root {
+  --main-bg-color: white;
+  --main-fg-color: black;
+  --accent-color-1: black;
+  --accent-color-2: black;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-variant-ligatures: none;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  background: inherit;
+  border-color: inherit;
+  line-height: inherit;
+  touch-action: manipulation;
+  appearance: none;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background: var(--main-bg-color);
+  color: var(--main-fg-color);
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  min-height: 100dvh;
+}
+
+*:focus {
+  outline: none;
+}
