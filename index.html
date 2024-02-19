@@ -7,12 +7,34 @@
   <head>
     <meta charset="UTF-8" />
 
+    <!-- 
+      Should not be bundled by Vite. Must be inlcuded and run as its own script.
+    -->
+    <script src="./coop-coep.js"></script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- TODO: title and description -->
     <meta name="description" content="Poker Chipper" />
     <title>Poker Chipper</title>
 
-    <link rel="stylesheet" href="./public/global.css" />
+    <link rel="stylesheet" href="/public/global.css" />
+
+    <!-- 
+      Sketchy workaround that is seemingly required to get z3-solver to
+      actually work. Had to copy built files from /node_modules into /public.
+
+      cp \
+        node_modules/z3-solver/build/z3-built.js \
+        node_modules/z3-solver/build/z3-built.wasm \
+        node_modules/z3-solver/build/z3-built.worker.js \
+        public
+
+      https://github.com/Z3Prover/z3/issues/6768#issuecomment-1596219078
+    -->
+    <script src="./z3-built.js"></script>
+    <script>
+      globalThis.global = { initZ3: globalThis.initZ3 };
+    </script>
   </head>
 
   <body></body>
