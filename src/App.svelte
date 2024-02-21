@@ -1,18 +1,33 @@
 <script>
-  import { init } from "z3-solver";
-  (async () => {
-    const { Context } = await init();
-    const { Solver, Int } = new Context("main");
+  import { solve } from "./solve.js";
 
-    const x = Int.const("x");
-
-    const solver = new Solver();
-
-    solver.add(x.add(1).eq(10));
-    await solver.check();
-    const model = solver.model();
-    console.log(model, model.eval(x).value());
-  })();
+  const numPeople = 7,
+    chips = {
+      red: 45,
+      green: 50,
+      blue: 50,
+      white: 47,
+      // "black": 47,
+    },
+    chipsValueInterval = 5,
+    chipsMultiple = 1,
+    buyIn = 1000,
+    buyInMultiple = 500,
+    blinds = {
+      small: 10,
+      big: 20,
+    },
+    preferredMultiple = 25;
+  solve(
+    numPeople,
+    chips,
+    chipsValueInterval,
+    chipsMultiple,
+    buyIn,
+    buyInMultiple,
+    blinds,
+    preferredMultiple,
+  ).then(console.log);
 </script>
 
 <div>Testing!</div>

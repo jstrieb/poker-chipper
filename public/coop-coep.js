@@ -14,6 +14,7 @@ function reload() {
   let num_reloads = JSON.parse(window.sessionStorage.getItem("reloads")) ?? 0;
   num_reloads++;
   if (num_reloads > MAX_RELOADS) {
+    window.sessionStorage.setItem("reloads", JSON.stringify(0));
     throw new Error(`Too many reloads (>${MAX_RELOADS}).`);
   }
   window.sessionStorage.setItem("reloads", JSON.stringify(num_reloads));
@@ -73,7 +74,8 @@ if (typeof window === "undefined") {
         await registerWorker();
       }
     } catch (e) {
-      // TODO
+      // TODO: Handle correctly
+      console.error(e);
     }
   })();
 }
