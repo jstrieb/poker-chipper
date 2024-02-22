@@ -79,8 +79,8 @@ if _blinds is not None:
 chip_sum = Sum(*(amount * value for amount, value in values.values()))
 s.add(chip_sum == buy_in)
 
-# print(s)
 s.maximize(Sum(*(a for a, _ in values.values())))
+print(s)
 if s.check() == sat:
     # print(s.model())
     model = s.model()

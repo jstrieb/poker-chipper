@@ -29,10 +29,14 @@ export async function solve(
   blinds,
   preferredMultiple,
 ) {
-  const { Context } = await init();
+  // TODO: Remove
+  console.log("Setting things up...");
+
+  const { Context, em } = await init();
   const { Optimize, Int, Or, Sum } = new Context("main");
 
   const solver = new Optimize();
+  solver.set("timeout", 30 * 1000);
 
   // TODO: Handle buy in ranges and buy in multiple
   const buyIn = Int.const("buy_in");
@@ -118,10 +122,14 @@ export async function solve(
   // Optimize for giving the maximum number of chips out to people
   solver.maximize(Sum(...Object.values(values).map(({ amount }) => amount)));
 
-  if ((await solver.check()) === "sat") {
+  // TODO: Remove
+  console.log("Thinking...");
+
+  let result;
+  if ((await solver.check()) !== "unsat") {
     const model = solver.model();
 
-    const result = Object.fromEntries(
+    result = Object.fromEntries(
       Object.entries(values).map(([color, { value, amount }]) => [
         color,
         {
@@ -131,9 +139,11 @@ export async function solve(
       ]),
     );
     result.buy_in = model.eval(buyIn).value();
-    return result;
   } else {
     // TODO
-    alert("Impossible!");
+    console.log("Impossible!");
   }
+
+  em.PThread.terminateAllThreads();
+  return result;
 }
