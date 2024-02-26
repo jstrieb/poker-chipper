@@ -79,6 +79,8 @@ model.addCons(sum([a * v for a, v in values.values()]) == buy_in)
 model.setObjective(sum([a for a, _ in values.values()]))
 model.setMaximize()
 
+model.writeProblem()
+
 model.optimize()
 status = model.getStatus()
 
