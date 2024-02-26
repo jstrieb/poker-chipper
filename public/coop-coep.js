@@ -46,7 +46,6 @@ function registerWorkerHandlers() {
   self.addEventListener("install", () => self.skipWaiting());
   self.addEventListener("activate", (e) => e.waitUntil(self.clients.claim()));
   self.addEventListener("fetch", (e) => {
-    console.log("Got fetch", e, e.request);
     let request = new Request(e.request, { credentials: "omit" });
     e.respondWith(
       fetch(request).then((response) => {
