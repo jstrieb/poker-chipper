@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      var Module = {
+        arguments: [
+          '-q',
+          '-c', 'read model.cip', 
+          '-c', 'optimize', 
+          '-c', 'write solution solution.txt',
+          '-c', 'quit',
+        ],
+        preRun: () => {
+          FS.writeFile("model.cip", `STATISTICS
+  Problem name     : main
+  Variables        : 37 (0 binary, 37 integer, 0 implicit integer, 0 continuous)
+  Constraints      : 0 initial, 61 maximal
+OBJECTIVE
+  Sense            : maximize
+VARIABLES
+  [integer] <buy_in>: obj=0, original bounds=[0,+inf]
+  [integer] <x2>: obj=0, original bounds=[0,+inf]
+  [integer] <x3>: obj=0, original bounds=[0,+inf]
+  [integer] <amount_red>: obj=1, original bounds=[0,+inf]
+  [integer] <value_red>: obj=0, original bounds=[0,+inf]
+  [integer] <amount_green>: obj=1, original bounds=[0,+inf]
+  [integer] <value_green>: obj=0, original bounds=[0,+inf]
+  [integer] <amount_blue>: obj=1, original bounds=[0,+inf]
+  [integer] <value_blue>: obj=0, original bounds=[0,+inf]
+  [integer] <amount_white>: obj=1, original bounds=[0,+inf]
+  [integer] <value_white>: obj=0, original bounds=[0,+inf]
+  [integer] <x12>: obj=0, original bounds=[0,+inf]
+  [integer] <x13>: obj=0, original bounds=[0,+inf]
+  [integer] <x14>: obj=0, original bounds=[0,+inf]
+  [integer] <x15>: obj=0, original bounds=[0,+inf]
+  [integer] <x16>: obj=0, original bounds=[0,+inf]
+  [integer] <x17>: obj=0, original bounds=[0,+inf]
+  [integer] <x18>: obj=0, original bounds=[0,+inf]
+  [integer] <x19>: obj=0, original bounds=[0,+inf]
+  [integer] <x20>: obj=0, original bounds=[0,+inf]
+  [integer] <x21>: obj=0, original bounds=[0,+inf]
+  [integer] <x22>: obj=0, original bounds=[0,+inf]
+  [integer] <x23>: obj=0, original bounds=[0,+inf]
+  [integer] <x24>: obj=0, original bounds=[0,+inf]
+  [integer] <x25>: obj=0, original bounds=[0,+inf]
+  [integer] <x26>: obj=0, original bounds=[0,+inf]
+  [integer] <x27>: obj=0, original bounds=[0,+inf]
+  [integer] <x28>: obj=0, original bounds=[0,+inf]
+  [integer] <x29>: obj=0, original bounds=[0,+inf]
+  [integer] <x30>: obj=0, original bounds=[0,+inf]
+  [integer] <x31>: obj=0, original bounds=[0,+inf]
+  [integer] <x32>: obj=0, original bounds=[0,+inf]
+  [integer] <x33>: obj=0, original bounds=[0,+inf]
+  [integer] <x34>: obj=0, original bounds=[0,+inf]
+  [integer] <x35>: obj=0, original bounds=[0,+inf]
+  [integer] <x36>: obj=0, original bounds=[0,+inf]
+  [integer] <x37>: obj=0, original bounds=[0,+inf]
+CONSTRAINTS
+  [linear] <c1>: <buy_in>[I] == 1000;
+  [linear] <c2>: <buy_in>[I] -500<x2>[I] -<x3>[I] == 0;
+  [linear] <c3>: <x3>[I] <= 499;
+  [linear] <c4>: <x3>[I] == 0;
+  [linear] <c5>: <amount_red>[I] >= 1;
+  [linear] <c6>: <value_red>[I] >= 1;
+  [linear] <c7>: <value_red>[I] -5<x12>[I] -<x13>[I] == 0;
+  [linear] <c8>: <x13>[I] <= 4;
+  [linear] <c9>: <x13>[I] == 0;
+  [linear] <c10>: <amount_red>[I] -<x14>[I] -<x15>[I] == 0;
+  [linear] <c11>: <x15>[I] <= 0;
+  [linear] <c12>: <x15>[I] == 0;
+  [linear] <c13>:  +5<amount_red>[I] <= 45;
+  [linear] <c14>: <amount_green>[I] >= 1;
+  [linear] <c15>: <value_green>[I] >= 1;
+  [linear] <c16>: <value_green>[I] -5<x16>[I] -<x17>[I] == 0;
+  [linear] <c17>: <x17>[I] <= 4;
+  [linear] <c18>: <x17>[I] == 0;
+  [linear] <c19>: <amount_green>[I] -<x18>[I] -<x19>[I] == 0;
+  [linear] <c20>: <x19>[I] <= 0;
+  [linear] <c21>: <x19>[I] == 0;
+  [linear] <c22>:  +5<amount_green>[I] <= 50;
+  [linear] <c23>: <amount_blue>[I] >= 1;
+  [linear] <c24>: <value_blue>[I] >= 1;
+  [linear] <c25>: <value_blue>[I] -5<x20>[I] -<x21>[I] == 0;
+  [linear] <c26>: <x21>[I] <= 4;
+  [linear] <c27>: <x21>[I] == 0;
+  [linear] <c28>: <amount_blue>[I] -<x22>[I] -<x23>[I] == 0;
+  [linear] <c29>: <x23>[I] <= 0;
+  [linear] <c30>: <x23>[I] == 0;
+  [linear] <c31>:  +5<amount_blue>[I] <= 50;
+  [linear] <c32>: <amount_white>[I] >= 1;
+  [linear] <c33>: <value_white>[I] >= 1;
+  [linear] <c34>: <value_white>[I] -5<x24>[I] -<x25>[I] == 0;
+  [linear] <c35>: <x25>[I] <= 4;
+  [linear] <c36>: <x25>[I] == 0;
+  [linear] <c37>: <amount_white>[I] -<x26>[I] -<x27>[I] == 0;
+  [linear] <c38>: <x27>[I] <= 0;
+  [linear] <c39>: <x27>[I] == 0;
+  [linear] <c40>:  +5<amount_white>[I] <= 47;
+  [linear] <c41>: <value_red>[I] -<value_white>[I] >= 1;
+  [nonlinear] <c42>: <value_red>-<value_white>*<x28>-<x29> == 0;
+  [linear] <c43>: <x29>[I] -<value_white>[I] <= -1;
+  [linear] <c44>: <x29>[I] == 0;
+  [linear] <c45>: <value_red>[I] -25<x30>[I] -<x31>[I] == 0;
+  [linear] <c46>: <x31>[I] <= 24;
+  [linear] <c47>: <x31>[I] == 0;
+  [linear] <c48>: <value_white>[I] -<value_green>[I] >= 1;
+  [nonlinear] <c49>: <value_white>-<value_green>*<x32>-<x33> == 0;
+  [linear] <c50>: <x33>[I] -<value_green>[I] <= -1;
+  [linear] <c51>: <x33>[I] == 0;
+  [linear] <c52>: <value_white>[I] -25<x34>[I] -<x35>[I] == 0;
+  [linear] <c53>: <x35>[I] <= 24;
+  [linear] <c54>: <x35>[I] == 0;
+  [linear] <c55>: <value_green>[I] -<value_blue>[I] >= 1;
+  [linear] <c56>: <value_green>[I] -25<x36>[I] -<x37>[I] == 0;
+  [linear] <c57>: <x37>[I] <= 24;
+  [linear] <c58>: <x37>[I] == 0;
+  [linear] <c59>: <value_red>[I] -0.2<buy_in>[I] <= 0;
+  [linear] <c60>: <value_blue>[I] == 10;
+  [nonlinear] <c61>: <buy_in>-<amount_red>*<value_red>-<amount_green>*<value_green>-<amount_blue>*<value_blue>-<amount_white>*<value_white> == 0;
+END`)
+        },
+      };
+    </script>
+    <script src="scip.js"></script>
+    <script>
+      function exists(path) {
+        const {exists: e} = FS.analyzePath(path);
+        return e;
+      }
+
+      async function sleep(ms) {
+        return new Promise((resolve) => {
+          setTimeout(resolve, ms);
+        });
+      }
+
+      async function getSolution() {
+        // console.log(exists("solution.txt"))
+        // const m = await Module();
+        while (!exists("solution.txt")) {
+          await sleep(100);
+        }
+        // console.log(exists("solution.txt"))
+        const raw = (new TextDecoder()).decode(FS.readFile("solution.txt"));
+        const lines = raw.split("\n").slice(2);
+        return Object.fromEntries(lines.map(l => { 
+          const m = l.match(/(\w+)\s+(\d+).*/);
+          if (m) {
+            const [k, v] = m.slice(1); 
+            return [k, parseInt(v)];
+          }
+        }).filter(x => x));
+      }
+
+      getSolution().then(console.log)
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
