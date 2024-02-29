@@ -1,17 +1,23 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <script>
       var Module = {
         arguments: [
-          '-q',
-          '-c', 'read model.cip', 
-          '-c', 'optimize', 
-          '-c', 'write solution solution.txt',
-          '-c', 'quit',
+          "-q",
+          "-c",
+          "read model.cip",
+          "-c",
+          "optimize",
+          "-c",
+          "write solution solution.txt",
+          "-c",
+          "quit",
         ],
         preRun: () => {
-          FS.writeFile("model.cip", `STATISTICS
+          FS.writeFile(
+            "model.cip",
+            `STATISTICS
   Problem name     : main
   Variables        : 37 (0 binary, 37 integer, 0 implicit integer, 0 continuous)
   Constraints      : 0 initial, 61 maximal
@@ -117,14 +123,15 @@ CONSTRAINTS
   [linear] <c59>: <value_red>[I] -0.2<buy_in>[I] <= 0;
   [linear] <c60>: <value_blue>[I] == 10;
   [nonlinear] <c61>: <buy_in>-<amount_red>*<value_red>-<amount_green>*<value_green>-<amount_blue>*<value_blue>-<amount_white>*<value_white> == 0;
-END`)
+END`,
+          );
         },
       };
     </script>
     <script src="scip.js"></script>
     <script>
       function exists(path) {
-        const {exists: e} = FS.analyzePath(path);
+        const { exists: e } = FS.analyzePath(path);
         return e;
       }
 
@@ -141,20 +148,23 @@ END`)
           await sleep(100);
         }
         // console.log(exists("solution.txt"))
-        const raw = (new TextDecoder()).decode(FS.readFile("solution.txt"));
+        const raw = new TextDecoder().decode(FS.readFile("solution.txt"));
         const lines = raw.split("\n").slice(2);
-        return Object.fromEntries(lines.map(l => { 
-          const m = l.match(/(\w+)\s+(\d+).*/);
-          if (m) {
-            const [k, v] = m.slice(1); 
-            return [k, parseInt(v)];
-          }
-        }).filter(x => x));
+        return Object.fromEntries(
+          lines
+            .map((l) => {
+              const m = l.match(/(\w+)\s+(\d+).*/);
+              if (m) {
+                const [k, v] = m.slice(1);
+                return [k, parseInt(v)];
+              }
+            })
+            .filter((x) => x),
+        );
       }
 
-      getSolution().then(console.log)
+      getSolution().then(console.log);
     </script>
   </head>
-  <body>
-  </body>
+  <body></body>
 </html>
