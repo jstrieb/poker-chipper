@@ -1,3 +1,5 @@
+import createSCIP from "./compiled/scip.js";
+
 function buildCip(
   numPeople,
   chips,
@@ -137,7 +139,11 @@ END`;
  * the optimal values for us, subject to an "objective" function we subjectively
  * create.
  */
-export async function solve(main, FS, ...args) {
+export async function solve(...args) {
+  const Module = await createSCIP({
+    arguments: ["-q", "-c", "quit"],
+  });
+  const { FS, callMain: main } = Module;
   const cip = buildCip(...args);
   FS.writeFile("model.cip", cip);
   main([

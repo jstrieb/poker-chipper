@@ -1,8 +1,6 @@
 <script>
   import { solve } from "./solve.js";
 
-  export let callMain, FS;
-
   const numPeople = 7,
     chips = {
       red: 45,
@@ -21,8 +19,6 @@
     },
     preferredMultiple = 25;
   solve(
-    callMain,
-    FS,
     numPeople,
     chips,
     chipsValueInterval,

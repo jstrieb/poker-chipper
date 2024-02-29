@@ -1,2 +1,1 @@
-public/z3-* linguist-vendored
-public/scip.* linguist-vendored
+src/compiled/* linguist-vendored
