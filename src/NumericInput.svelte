@@ -5,7 +5,7 @@
     flex-wrap: wrap;
     justify-content: flex-start;
     align-items: baseline;
-    gap: 1ch;
+    gap: 0 1ch;
     max-width: 100%;
   }
 
@@ -60,7 +60,14 @@
     {#each increments.slice(0, increments.length / 2) as increment}
       <Button on:click="{() => (value += increment)}">{increment}</Button>
     {/each}
-    <input bind:value type="number" pattern="[0-9]*" inputmode="numeric" />
+    <input
+      bind:value
+      type="number"
+      step="1"
+      pattern="[0-9]*(\.[0-9]+)?"
+      inputmode="numeric"
+      {...$$props}
+    />
     {#each increments.slice(increments.length / 2) as increment}
       <Button on:click="{() => (value += increment)}">+{increment}</Button>
     {/each}
