@@ -31,6 +31,7 @@
 </style>
 
 <script>
+  import Button from "./Button.svelte";
   import NumericInput from "./NumericInput.svelte";
 
   import { solve } from "./solve.js";
@@ -43,13 +44,14 @@
     return formatter.format(x);
   }
 
+  const colors = ["black", "purple", "yellow", "brown", "gray"];
+
   let numPeople = 7,
     chips = {
-      red: 45,
-      green: 50,
+      white: 50,
+      red: 50,
       blue: 50,
-      white: 47,
-      black: 47,
+      green: 50,
     },
     chipsValueInterval = 5,
     chipsMultiple = 1,
@@ -87,6 +89,18 @@
     increments="{[-0.05, 0.05]}"
     step="0.01">Small Blind</NumericInput
   >
+  <Button
+    on:click="{() => {
+      chips[colors.shift()] = 50;
+    }}">Add Chip Color</Button
+  >
+  {#each Object.keys(chips) as color}
+    <NumericInput
+      bind:value="{chips[color]}"
+      increments="{[-50, -5, -1, 1, 5, 50]}"
+      >Total Number of {color.slice(0, 1).toLocaleUpperCase() + color.slice(1)} Chips</NumericInput
+    >
+  {/each}
 
   <hr />
 
