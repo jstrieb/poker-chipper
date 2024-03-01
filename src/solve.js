@@ -47,7 +47,7 @@ function buildCip(
 
   // TODO: Handle buy in ranges and buy in multiple
   const buyIn = addVar("buy_in");
-  addCons(`<${buyIn}>[I] == ${_buyIn}`);
+  addCons(`<${buyIn}>[I] == ${_buyIn * 100}`);
   addCons(`<${mod(buyIn, buyInMultiple)}>[I] == 0`);
 
   // Make variables to solve for the amount and value of each color
@@ -98,14 +98,14 @@ function buildCip(
 
   // The max value chip should never be more than ~20% of the total buy-in
   addCons(
-    `<${values[orderedColors[0]].value}>[I] <= ${Math.floor(_buyIn / 5)}`,
+    `<${values[orderedColors[0]].value}>[I] <= ${Math.floor((_buyIn * 100) / 5)}`,
   );
 
   if (blinds) {
     const { small, big } = blinds;
     // The smallest valued chip should be equal to the small blind
     addCons(
-      `<${values[orderedColors[orderedColors.length - 1]].value}>[I] == ${small}`,
+      `<${values[orderedColors[orderedColors.length - 1]].value}>[I] == ${small * 100}`,
     );
     // We should be able to create the big blind from (at most) a couple of one
     // of the types of chips

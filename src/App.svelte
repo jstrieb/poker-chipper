@@ -30,8 +30,8 @@
     buyIn = 10,
     buyInMultiple = 1,
     blinds = {
-      small: 10,
-      big: 20,
+      small: 0.1,
+      big: 0.2,
     },
     preferredMultiple = 25;
   $: solve(
@@ -39,7 +39,7 @@
     chips,
     chipsValueInterval,
     chipsMultiple,
-    buyIn * 100,
+    buyIn,
     buyInMultiple,
     blinds,
     preferredMultiple,
@@ -50,5 +50,15 @@
   <NumericInput bind:value="{numPeople}">Number of Players</NumericInput>
   <NumericInput bind:value="{buyIn}" increments="{[-5, -1, 1, 5]}" step="0.01"
     >Buy In</NumericInput
+  >
+  <NumericInput
+    bind:value="{blinds.big}"
+    increments="{[-0.05, 0.05]}"
+    step="0.01">Big Blind</NumericInput
+  >
+  <NumericInput
+    bind:value="{blinds.small}"
+    increments="{[-0.05, 0.05]}"
+    step="0.01">Small Blind</NumericInput
   >
 </div>
