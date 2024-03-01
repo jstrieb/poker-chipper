@@ -144,8 +144,10 @@ export async function solve(...args) {
     arguments: ["-q", "-c", "quit"],
   });
   const { FS, callMain: main } = Module;
+  // Build a model file and write it to the virtual filesystem
   const cip = buildCip(...args);
   FS.writeFile("model.cip", cip);
+  // Run the solver on the model file, write solution to virtual filesystem
   main([
     "-q",
     "-c",
@@ -157,6 +159,7 @@ export async function solve(...args) {
     "-c",
     "quit",
   ]);
+  // Read solution from virtual filesystem, remove file, return parsed result
   const rawSolution = new TextDecoder().decode(FS.readFile("solution.txt"));
   FS.unlink("solution.txt");
   const lines = rawSolution.split("\n").slice(2);
@@ -169,6 +172,7 @@ export async function solve(...args) {
           return [k, parseInt(v)];
         }
       })
-      .filter((x) => x),
+      .filter((x) => x)
+      .filter(([k, _]) => !k.match(/x\d+/)),
   );
 }
