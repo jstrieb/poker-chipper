@@ -1,5 +1,9 @@
 import createSCIP from "./compiled/scip.js";
 
+const modulePromise = createSCIP({
+  arguments: ["-q", "-c", "quit"],
+});
+
 function buildCip(
   numPeople,
   chips,
@@ -145,9 +149,7 @@ export async function solve(...args) {
   if (args.some((x) => x == null)) {
     return undefined;
   }
-  const Module = await createSCIP({
-    arguments: ["-q", "-c", "quit"],
-  });
+  const Module = await modulePromise;
   const { FS, callMain: main } = Module;
   // Build a model file and write it to the virtual filesystem
   const cip = buildCip(...args);
