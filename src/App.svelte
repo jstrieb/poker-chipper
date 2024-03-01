@@ -11,6 +11,18 @@
     gap: 1em;
   }
 
+  .chip {
+    background: var(--color);
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+    border: 1px solid var(--main-fg-color);
+    border-radius: 50%;
+    position: relative;
+    bottom: -0.1em;
+    box-shadow: 2px 2px 0 0 var(--main-fg-color);
+  }
+
   hr {
     border: none;
     border-top: 3px solid var(--main-fg-color);
@@ -83,9 +95,9 @@
   {:then solution}
     {#each Object.entries(solution ?? {}).sort(([_a, { value: a }], [_b, { value: b }]) => b - a) as [color, { amount, value }]}
       <div>
-        {color.slice(0, 1).toLocaleUpperCase() + color.slice(1)}: {amount} x {dollars(
-          value,
-        )}
+        <span class="chip" style:--color="{color}"></span>
+        {color.slice(0, 1).toLocaleUpperCase() + color.slice(1)}: {amount} &times;
+        {dollars(value)}
         = {dollars(amount * value)}
       </div>
     {:else}
