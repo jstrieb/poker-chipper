@@ -10,12 +10,26 @@
     align-items: stretch;
     gap: 1em;
   }
+
+  hr {
+    border: none;
+    border-top: 3px solid var(--main-fg-color);
+    margin: 1em 0;
+  }
 </style>
 
 <script>
   import NumericInput from "./NumericInput.svelte";
 
   import { solve } from "./solve.js";
+
+  const formatter = Intl.NumberFormat(undefined, {
+    style: "currency",
+    currency: "USD",
+  });
+  function dollars(x) {
+    return formatter.format(x);
+  }
 
   let numPeople = 7,
     chips = {
@@ -34,7 +48,7 @@
       big: 0.2,
     },
     preferredMultiple = 25;
-  $: solve(
+  $: solutionPromise = solve(
     numPeople,
     chips,
     chipsValueInterval,
@@ -43,7 +57,7 @@
     buyInMultiple,
     blinds,
     preferredMultiple,
-  ).then(console.log);
+  );
 </script>
 
 <div class="main">
@@ -61,4 +75,21 @@
     increments="{[-0.05, 0.05]}"
     step="0.01">Small Blind</NumericInput
   >
+
+  <hr />
+
+  {#await solutionPromise}
+    <div>Loading...</div>
+  {:then solution}
+    {#each Object.entries(solution ?? {}).sort(([_a, { value: a }], [_b, { value: b }]) => b - a) as [color, { amount, value }]}
+      <div>
+        {color.slice(0, 1).toLocaleUpperCase() + color.slice(1)}: {amount} x {dollars(
+          value,
+        )}
+        = {dollars(amount * value)}
+      </div>
+    {:else}
+      <div>No valid solution found!</div>
+    {/each}
+  {/await}
 </div>

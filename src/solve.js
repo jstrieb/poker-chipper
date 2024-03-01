@@ -62,7 +62,8 @@ function buildCip(
   );
   Object.entries(values).forEach(([color, { amount, value }]) => {
     // Amounts and values must be greater than zero
-    // TODO: Is this necessary?
+    addCons(`<${amount}>[I] >= 1`);
+    addCons(`<${value}>[I] >= 1`);
     // Every chip value must be a multiple of this interval (e.g., 25 cents)
     addCons(`<${mod(value, chipsValueInterval)}>[I] == 0`);
     // The amount of each color chip given must be a multiple of chips multiple
@@ -183,5 +184,13 @@ export async function solve(...args) {
   if (Object.entries(result).length === 0) {
     return undefined;
   }
-  return result;
+  return Object.fromEntries(
+    Object.keys(args[1]).map((color) => [
+      color,
+      {
+        amount: result[`amount_${color}`] ?? 0,
+        value: (result[`value_${color}`] ?? 0) / 100,
+      },
+    ]),
+  );
 }
