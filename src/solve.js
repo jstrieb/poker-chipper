@@ -130,7 +130,8 @@ VARIABLES
 ${variables.join("\n")}
 CONSTRAINTS
 ${constraints.join("\n")}
-END`;
+END
+`;
 }
 
 /***
