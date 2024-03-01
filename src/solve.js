@@ -140,6 +140,9 @@ END`;
  * create.
  */
 export async function solve(...args) {
+  if (args.some((x) => x == null)) {
+    return undefined;
+  }
   const Module = await createSCIP({
     arguments: ["-q", "-c", "quit"],
   });
@@ -159,11 +162,12 @@ export async function solve(...args) {
     "-c",
     "quit",
   ]);
+  // TODO: Handle impossible case
   // Read solution from virtual filesystem, remove file, return parsed result
   const rawSolution = new TextDecoder().decode(FS.readFile("solution.txt"));
   FS.unlink("solution.txt");
   const lines = rawSolution.split("\n").slice(2);
-  return Object.fromEntries(
+  const result = Object.fromEntries(
     lines
       .map((l) => {
         const m = l.match(/(\w+)\s+(\d+).*/);
@@ -175,4 +179,8 @@ export async function solve(...args) {
       .filter((x) => x)
       .filter(([k, _]) => !k.match(/x\d+/)),
   );
+  if (Object.entries(result).length === 0) {
+    return undefined;
+  }
+  return result;
 }

@@ -1,7 +1,18 @@
+<style>
+  .main {
+    max-width: 50ch;
+    width: 100%;
+    margin: 2em 0;
+    padding: 0 0.5em;
+  }
+</style>
+
 <script>
+  import NumericInput from "./NumericInput.svelte";
+
   import { solve } from "./solve.js";
 
-  const numPeople = 7,
+  let numPeople = 7,
     chips = {
       red: 45,
       green: 50,
@@ -18,7 +29,7 @@
       big: 20,
     },
     preferredMultiple = 25;
-  solve(
+  $: solve(
     numPeople,
     chips,
     chipsValueInterval,
@@ -30,4 +41,6 @@
   ).then(console.log);
 </script>
 
-<div>Testing!</div>
+<div class="main">
+  <NumericInput bind:value="{numPeople}">Number of Players</NumericInput>
+</div>
