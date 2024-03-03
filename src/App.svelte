@@ -63,8 +63,8 @@
     },
     preferredMultiple = 25;
   $: solutionPromise = solve(
-    numPeople,
     chips,
+    numPeople,
     chipsValueInterval,
     chipsMultiple,
     buyIn,

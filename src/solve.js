@@ -5,8 +5,8 @@ const modulePromise = createSCIP({
 });
 
 function buildCip(
-  numPeople,
   chips,
+  numPeople,
   chipsValueInterval,
   chipsMultiple,
   _buyIn,
@@ -145,14 +145,14 @@ END
  * the optimal values for us, subject to an "objective" function we subjectively
  * create.
  */
-export async function solve(...args) {
+export async function solve(chips, ...args) {
   if (args.some((x) => x == null)) {
     return undefined;
   }
   const Module = await modulePromise;
   const { FS, callMain: main } = Module;
   // Build a model file and write it to the virtual filesystem
-  const cip = buildCip(...args);
+  const cip = buildCip(chips, ...args);
   FS.writeFile("model.cip", cip);
   // Run the solver on the model file, write solution to virtual filesystem
   main([
@@ -187,7 +187,7 @@ export async function solve(...args) {
     return undefined;
   }
   return Object.fromEntries(
-    Object.keys(args[1]).map((color) => [
+    Object.keys(chips).map((color) => [
       color,
       {
         amount: result[`amount_${color}`] ?? 0,
