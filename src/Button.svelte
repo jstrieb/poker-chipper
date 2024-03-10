@@ -1,7 +1,7 @@
 <style>
   button {
     cursor: pointer;
-    padding: 0.25em;
+    padding: 0.5em 0.25em;
     border: 2px solid var(--main-fg-color);
     box-shadow: 4px 4px 0 0 var(--main-fg-color);
   }

@@ -76,18 +76,10 @@
 
 <div class="main">
   <NumericInput bind:value="{numPeople}">Number of Players</NumericInput>
-  <NumericInput bind:value="{buyIn}" increments="{[-5, -1, 1, 5]}" step="0.01"
-    >Buy In</NumericInput
-  >
-  <NumericInput
-    bind:value="{blinds.big}"
-    increments="{[-0.05, 0.05]}"
-    step="0.01">Big Blind</NumericInput
-  >
-  <NumericInput
-    bind:value="{blinds.small}"
-    increments="{[-0.05, 0.05]}"
-    step="0.01">Small Blind</NumericInput
+  <NumericInput bind:value="{buyIn}" step="0.01">Buy In</NumericInput>
+  <NumericInput bind:value="{blinds.big}" step="0.01">Big Blind</NumericInput>
+  <NumericInput bind:value="{blinds.small}" step="0.01"
+    >Small Blind</NumericInput
   >
   <Button
     on:click="{() => {
@@ -95,9 +87,7 @@
     }}">Add Chip Color</Button
   >
   {#each Object.keys(chips) as color}
-    <NumericInput
-      bind:value="{chips[color]}"
-      increments="{[-50, -5, -1, 1, 5, 50]}"
+    <NumericInput bind:value="{chips[color]}"
       >Total Number of {color.slice(0, 1).toLocaleUpperCase() + color.slice(1)} Chips</NumericInput
     >
   {/each}

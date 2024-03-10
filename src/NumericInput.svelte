@@ -9,67 +9,78 @@
     max-width: 100%;
   }
 
-  div div {
-    flex-wrap: nowrap;
-    flex-grow: 1;
-    flex-shrink: 1;
-  }
-
   div span {
     white-space: pre;
   }
 
-  div input {
+  .input {
+    user-select: none;
+    cursor: col-resize;
     flex-grow: 1;
     flex-shrink: 1;
-  }
-
-  input {
+    min-width: fit-content;
     width: 100%;
     padding: 0.25em;
     outline: none;
+    justify-content: center;
+    text-align: center;
     border: 2px solid var(--main-fg-color);
     box-shadow: 5px 5px 0 0 var(--main-fg-color);
-    text-align: center;
-  }
-
-  input:focus {
-    outline: 0.5px solid var(--accent-color-1);
-    box-shadow: 3px 3px 0 0 var(--accent-color-1);
-  }
-
-  input,
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: textfield;
   }
 </style>
 
 <script>
-  import Button from "./Button.svelte";
+  export let value, transform;
+  $: if (!transform) {
+    transform = roundToNearest(5);
+  }
+  let numInput,
+    queued = 0,
+    offset = 0;
 
-  export let value,
-    increments = [-1, 1];
+  let roundToNearest = (x) => x;
+  $: roundToNearest = (x) => {
+    return (y) => {
+      const scale = 10;
+      const sign = Math.sign(y);
+      y = Math.abs(Math.floor(y / scale));
+      const exponent = Math.floor(Math.log(y) / Math.log(x));
+      const power = Math.pow(x, exponent);
+      return (power * Math.floor(y / power) || 0) * sign;
+    };
+  };
+
+  function pointerdown(e) {
+    numInput.addEventListener("pointermove", pointermove);
+    numInput.setPointerCapture(e.pointerId);
+    const { left, right } = e.target.getBoundingClientRect();
+    const width = right - left;
+    offset = e.clientX - left - Math.floor(width / 2);
+  }
+
+  function pointerup(e) {
+    numInput.removeEventListener("pointermove", pointermove);
+    numInput.releasePointerCapture(e.pointerId);
+    value += queued;
+    queued = 0;
+    offset = 0;
+  }
+
+  function pointermove(e) {
+    const { left, right } = e.target.getBoundingClientRect();
+    const width = right - left;
+    queued = transform(e.clientX - offset - left - Math.floor(width / 2));
+  }
 </script>
 
 <div>
   <span><slot /></span>
-  <div>
-    {#each increments.slice(0, increments.length / 2) as increment}
-      <Button on:click="{() => (value += increment)}">{increment}</Button>
-    {/each}
-    <input
-      bind:value
-      type="number"
-      step="1"
-      pattern="[0-9]*(\.[0-9]+)?"
-      inputmode="numeric"
-      {...$$props}
-    />
-    {#each increments.slice(increments.length / 2) as increment}
-      <Button on:click="{() => (value += increment)}">+{increment}</Button>
-    {/each}
+  <div
+    class="input"
+    bind:this="{numInput}"
+    on:pointerdown="{pointerdown}"
+    on:pointerup="{pointerup}"
+  >
+    {value + queued}
   </div>
 </div>
