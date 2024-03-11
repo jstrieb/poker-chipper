@@ -35,6 +35,7 @@
     transform = (x) => x,
     min = -Infinity,
     max = Infinity;
+  let initialValue = value;
   let numInput,
     queued = 0,
     offset = 0;
@@ -54,15 +55,16 @@
   function pointerup(e) {
     numInput.removeEventListener("pointermove", pointermove);
     numInput.releasePointerCapture(e.pointerId);
-    value = minmax(value + queued);
     queued = 0;
     offset = 0;
+    initialValue = value;
   }
 
   function pointermove(e) {
     const { left, right } = e.target.getBoundingClientRect();
     const width = right - left;
     queued = transform(e.clientX - offset - left - Math.floor(width / 2));
+    value = minmax(initialValue + queued);
   }
 </script>
 
@@ -74,6 +76,6 @@
     on:pointerdown="{pointerdown}"
     on:pointerup="{pointerup}"
   >
-    {value + queued}
+    {value}
   </div>
 </div>
