@@ -23,32 +23,25 @@
     padding: 0.25em;
     outline: none;
     justify-content: center;
+    align-items: baseline;
     text-align: center;
     border: 2px solid var(--main-fg-color);
-    box-shadow: 5px 5px 0 0 var(--main-fg-color);
+    box-shadow: 3px 3px 0 0 var(--main-fg-color);
   }
 </style>
 
 <script>
-  export let value, transform;
-  $: if (!transform) {
-    transform = roundToNearest(5);
-  }
+  export let value,
+    transform = (x) => x,
+    min = -Infinity,
+    max = Infinity;
   let numInput,
     queued = 0,
     offset = 0;
 
-  let roundToNearest = (x) => x;
-  $: roundToNearest = (x) => {
-    return (y) => {
-      const scale = 10;
-      const sign = Math.sign(y);
-      y = Math.abs(Math.floor(y / scale));
-      const exponent = Math.floor(Math.log(y) / Math.log(x));
-      const power = Math.pow(x, exponent);
-      return (power * Math.floor(y / power) || 0) * sign;
-    };
-  };
+  function minmax(x) {
+    return Math.min(max, Math.max(min, x));
+  }
 
   function pointerdown(e) {
     numInput.addEventListener("pointermove", pointermove);
@@ -61,7 +54,7 @@
   function pointerup(e) {
     numInput.removeEventListener("pointermove", pointermove);
     numInput.releasePointerCapture(e.pointerId);
-    value += queued;
+    value = minmax(value + queued);
     queued = 0;
     offset = 0;
   }

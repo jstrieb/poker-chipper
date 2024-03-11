@@ -72,15 +72,21 @@
     blinds,
     preferredMultiple,
   );
+
+  // Every 20 pixels is an increment of one
+  const SCALE_VALUE = 20;
+  function scale(x) {
+    return Math.floor(x / SCALE_VALUE);
+  }
 </script>
 
 <div class="main">
-  <NumericInput bind:value="{numPeople}">Number of Players</NumericInput>
-  <NumericInput bind:value="{buyIn}" step="0.01">Buy In</NumericInput>
-  <NumericInput bind:value="{blinds.big}" step="0.01">Big Blind</NumericInput>
-  <NumericInput bind:value="{blinds.small}" step="0.01"
-    >Small Blind</NumericInput
+  <NumericInput bind:value="{numPeople}" min="1" transform="{scale}"
+    >Number of Players</NumericInput
   >
+  <NumericInput bind:value="{buyIn}" min="0">Buy In</NumericInput>
+  <NumericInput bind:value="{blinds.big}">Big Blind</NumericInput>
+  <NumericInput bind:value="{blinds.small}">Small Blind</NumericInput>
   <Button
     on:click="{() => {
       chips[colors.shift()] = 50;
