@@ -158,6 +158,8 @@ export async function solve(chips, ...args) {
   main([
     "-q",
     "-c",
+    "set limits time 600",
+    "-c",
     "read model.cip",
     "-c",
     "optimize",
