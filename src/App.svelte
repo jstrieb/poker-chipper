@@ -34,6 +34,7 @@
   import Button from "./Button.svelte";
   import NumericInput from "./NumericInput.svelte";
 
+  import { compose, roundToNearestPower, scale } from "./helpers.js";
   import { solve } from "./solve.js";
 
   const formatter = Intl.NumberFormat(undefined, {
@@ -72,19 +73,17 @@
     blinds,
     preferredMultiple,
   );
-
-  // Every 20 pixels is an increment of one
-  const SCALE_VALUE = 20;
-  function scale(x) {
-    return Math.floor(x / SCALE_VALUE);
-  }
 </script>
 
 <div class="main">
-  <NumericInput bind:value="{numPeople}" min="1" transform="{scale}"
+  <NumericInput bind:value="{numPeople}" min="1" transform="{scale(20)}"
     >Number of Players</NumericInput
   >
-  <NumericInput bind:value="{buyIn}" min="1">Buy In</NumericInput>
+  <NumericInput
+    bind:value="{buyIn}"
+    transform="{compose(roundToNearestPower(5), scale(10))}"
+    min="1">Buy In</NumericInput
+  >
   <NumericInput bind:value="{blinds.big}" min="0.01">Big Blind</NumericInput>
   <NumericInput bind:value="{blinds.small}" min="0.01">Small Blind</NumericInput
   >
@@ -114,5 +113,8 @@
     {:else}
       <div>No valid solution found!</div>
     {/each}
+  {:catch e}
+    <div>No valid solution found!</div>
+    <div>{e?.message ?? e}</div>
   {/await}
 </div>
