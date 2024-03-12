@@ -33,6 +33,7 @@
 <script>
   export let value,
     transform = (x) => x,
+    display = (x) => x,
     min = -Infinity,
     max = Infinity;
   let initialValue = value;
@@ -76,6 +77,6 @@
     on:pointerdown="{pointerdown}"
     on:pointerup="{pointerup}"
   >
-    {value}
+    {display(value)}
   </div>
 </div>

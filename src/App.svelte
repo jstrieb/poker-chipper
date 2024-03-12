@@ -34,16 +34,14 @@
   import Button from "./Button.svelte";
   import NumericInput from "./NumericInput.svelte";
 
-  import { compose, roundToNearestPower, scale } from "./helpers.js";
-  import { solve } from "./solve.js";
-
-  const formatter = Intl.NumberFormat(undefined, {
-    style: "currency",
-    currency: "USD",
-  });
-  function dollars(x) {
-    return formatter.format(x);
-  }
+  import {
+    compose,
+    roundToNearestPower,
+    roundToNearest,
+    scale,
+    dollars,
+  } from "./helpers.js";
+  import { reloadModule, solve } from "./solve.js";
 
   const colors = ["black", "purple", "yellow", "brown", "gray"];
 
@@ -54,7 +52,7 @@
       blue: 50,
       green: 50,
     },
-    chipsValueInterval = 5,
+    chipsValuemultiple = 5,
     chipsMultiple = 1,
     buyIn = 10,
     buyInMultiple = 1,
@@ -66,13 +64,16 @@
   $: solutionPromise = solve(
     chips,
     numPeople,
-    chipsValueInterval,
+    chipsValuemultiple,
     chipsMultiple,
     buyIn,
     buyInMultiple,
     blinds,
     preferredMultiple,
-  );
+  ).catch((e) => {
+    console.error(e);
+    reloadModule();
+  });
 </script>
 
 <div class="main">
@@ -81,11 +82,44 @@
   >
   <NumericInput
     bind:value="{buyIn}"
-    transform="{compose(roundToNearestPower(5), scale(10))}"
+    display="{dollars}"
+    transform="{compose(
+      roundToNearest(
+        { multiple: 1 },
+        { limit: 10, multiple: 5 },
+        { limit: 50, multiple: 25 },
+      ),
+      scale(10),
+    )}"
     min="1">Buy In</NumericInput
   >
-  <NumericInput bind:value="{blinds.big}" min="0.01">Big Blind</NumericInput>
-  <NumericInput bind:value="{blinds.small}" min="0.01">Small Blind</NumericInput
+  <NumericInput
+    bind:value="{blinds.big}"
+    display="{dollars}"
+    transform="{compose(
+      (x) => x / 20,
+      roundToNearest(
+        { multiple: 1 },
+        { limit: 5, multiple: 5 },
+        { limit: 25, multiple: 25 },
+      ),
+      scale(5),
+    )}"
+    min="0.05">Big Blind</NumericInput
+  >
+  <NumericInput
+    bind:value="{blinds.small}"
+    display="{dollars}"
+    transform="{compose(
+      (x) => x / 20,
+      roundToNearest(
+        { multiple: 1 },
+        { limit: 5, multiple: 5 },
+        { limit: 25, multiple: 25 },
+      ),
+      scale(5),
+    )}"
+    min="0.05">Small Blind</NumericInput
   >
   <Button
     on:click="{() => {
@@ -93,7 +127,17 @@
     }}">Add Chip Color</Button
   >
   {#each Object.keys(chips) as color}
-    <NumericInput bind:value="{chips[color]}" min="1"
+    <NumericInput
+      bind:value="{chips[color]}"
+      min="1"
+      transform="{compose(
+        roundToNearest(
+          { multiple: 1 },
+          { limit: 10, multiple: 5 },
+          { limit: 50, multiple: 25 },
+        ),
+        scale(3),
+      )}"
       >Total Number of {color.slice(0, 1).toLocaleUpperCase() + color.slice(1)} Chips</NumericInput
     >
   {/each}
@@ -113,8 +157,5 @@
     {:else}
       <div>No valid solution found!</div>
     {/each}
-  {:catch e}
-    <div>No valid solution found!</div>
-    <div>{e?.message ?? e}</div>
   {/await}
 </div>

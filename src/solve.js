@@ -1,8 +1,12 @@
 import createSCIP from "./compiled/scip.js";
 
-const modulePromise = createSCIP({
-  arguments: ["-q", "-c", "quit"],
-});
+let modulePromise;
+export function reloadModule() {
+  modulePromise = createSCIP({
+    arguments: ["-q", "-c", "quit"],
+  });
+}
+reloadModule();
 
 function buildCip(
   chips,

@@ -1,4 +1,4 @@
-export function roundToNearest(x) {
+export function roundToNearestMultiple(x) {
   return (y) => Math.floor(y / x) * x;
 }
 
@@ -8,7 +8,21 @@ export function roundToNearestPower(base) {
     x = Math.abs(x);
     const exponent = Math.floor(Math.log(x) / Math.log(base));
     const power = Math.pow(base, exponent);
-    return (roundToNearest(power)(x) || 0) * sign;
+    return (roundToNearestMultiple(power)(x) || 0) * sign;
+  };
+}
+
+export function roundToNearest(...values) {
+  values = values.sort((a, b) => a.multiple - b.multiple);
+  return (x) => {
+    const sign = Math.sign(x);
+    x = Math.abs(x);
+    for (let i = 1; i < values.length; i++) {
+      if (x <= values[i].limit) {
+        return roundToNearestMultiple(values[i - 1].multiple)(x) * sign;
+      }
+    }
+    return roundToNearestMultiple(values[values.length - 1].multiple)(x) * sign;
   };
 }
 
@@ -25,4 +39,12 @@ export function compose(...functions) {
 
 export function scale(scaleValue) {
   return (x) => Math.floor(x / scaleValue);
+}
+
+const formatter = Intl.NumberFormat(undefined, {
+  style: "currency",
+  currency: "USD",
+});
+export function dollars(x) {
+  return formatter.format(x);
 }
