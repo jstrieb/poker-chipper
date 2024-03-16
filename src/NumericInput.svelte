@@ -46,6 +46,8 @@
   }
 
   function pointerdown(e) {
+    e.stopPropagation();
+    e.preventDefault();
     numInput.addEventListener("pointermove", pointermove);
     numInput.setPointerCapture(e.pointerId);
     const { left, right } = e.target.getBoundingClientRect();
@@ -54,6 +56,8 @@
   }
 
   function pointerup(e) {
+    e.stopPropagation();
+    e.preventDefault();
     numInput.removeEventListener("pointermove", pointermove);
     numInput.releasePointerCapture(e.pointerId);
     queued = 0;
@@ -62,6 +66,8 @@
   }
 
   function pointermove(e) {
+    e.stopPropagation();
+    e.preventDefault();
     const { left, right } = e.target.getBoundingClientRect();
     const width = right - left;
     queued = transform(e.clientX - offset - left - Math.floor(width / 2));

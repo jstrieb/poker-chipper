@@ -17,9 +17,9 @@ export function roundToNearest(...values) {
   return (x) => {
     const sign = Math.sign(x);
     x = Math.abs(x);
-    for (let i = 1; i < values.length; i++) {
+    for (let i = 0; i < values.length - 1; i++) {
       if (x <= values[i].limit) {
-        return roundToNearestMultiple(values[i - 1].multiple)(x) * sign;
+        return roundToNearestMultiple(values[i].multiple)(x) * sign;
       }
     }
     return roundToNearestMultiple(values[values.length - 1].multiple)(x) * sign;

@@ -34,13 +34,7 @@
   import Button from "./Button.svelte";
   import NumericInput from "./NumericInput.svelte";
 
-  import {
-    compose,
-    roundToNearestPower,
-    roundToNearest,
-    scale,
-    dollars,
-  } from "./helpers.js";
+  import { compose, roundToNearest, scale, dollars } from "./helpers.js";
   import { reloadModule, solve } from "./solve.js";
 
   const colors = ["black", "purple", "yellow", "brown", "gray"];
@@ -85,9 +79,9 @@
     display="{dollars}"
     transform="{compose(
       roundToNearest(
-        { multiple: 1 },
-        { limit: 10, multiple: 5 },
-        { limit: 50, multiple: 25 },
+        { limit: 10, multiple: 1 },
+        { limit: 50, multiple: 5 },
+        { multiple: 25 },
       ),
       scale(10),
     )}"
@@ -99,9 +93,9 @@
     transform="{compose(
       (x) => x / 20,
       roundToNearest(
-        { multiple: 1 },
-        { limit: 5, multiple: 5 },
-        { limit: 25, multiple: 25 },
+        { limit: 5, multiple: 1 },
+        { limit: 25, multiple: 5 },
+        { multiple: 25 },
       ),
       scale(5),
     )}"
@@ -113,9 +107,9 @@
     transform="{compose(
       (x) => x / 20,
       roundToNearest(
-        { multiple: 1 },
-        { limit: 5, multiple: 5 },
-        { limit: 25, multiple: 25 },
+        { limit: 5, multiple: 1 },
+        { limit: 25, multiple: 5 },
+        { multiple: 25 },
       ),
       scale(5),
     )}"
@@ -132,13 +126,13 @@
       min="1"
       transform="{compose(
         roundToNearest(
-          { multiple: 1 },
-          { limit: 10, multiple: 5 },
-          { limit: 50, multiple: 25 },
+          { limit: 10, multiple: 1 },
+          { limit: 50, multiple: 5 },
+          { multiple: 25 },
         ),
         scale(3),
       )}"
-      >Total Number of {color.slice(0, 1).toLocaleUpperCase() + color.slice(1)} Chips</NumericInput
+      >Number of {color.slice(0, 1).toLocaleUpperCase() + color.slice(1)} Chips</NumericInput
     >
   {/each}
 
