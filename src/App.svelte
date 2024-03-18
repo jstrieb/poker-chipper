@@ -28,6 +28,18 @@
     border-top: 3px solid var(--main-fg-color);
     margin: 1em 0;
   }
+
+  h1 {
+    margin: 1em 0;
+  }
+
+  h1:first-child {
+    margin-top: 0;
+  }
+
+  ul {
+    margin: 0 1em;
+  }
 </style>
 
 <script>
@@ -68,9 +80,23 @@
     console.error(e);
     reloadModule();
   });
+
+  function titleCase(s) {
+    return s.slice(0, 1).toLocaleUpperCase() + s.slice(1);
+  }
 </script>
 
 <div class="main">
+  <h1>Instructions</h1>
+  <div class="instructions">
+    <ul>
+      <li>Drag or tap numbers to change their value</li>
+      <li>Tap the button to add an additional chip color</li>
+      <li>Tap any color to edit it</li>
+      <li>Optimal results are computed live at the bottom</li>
+    </ul>
+  </div>
+  <h1>Inputs</h1>
   <NumericInput bind:value="{numPeople}" min="1" transform="{scale(20)}"
     >Number of Players</NumericInput
   >
@@ -115,11 +141,6 @@
     )}"
     min="0.05">Small Blind</NumericInput
   >
-  <Button
-    on:click="{() => {
-      chips[colors.shift()] = 50;
-    }}">Add Chip Color</Button
-  >
   {#each Object.keys(chips) as color}
     <NumericInput
       bind:value="{chips[color]}"
@@ -132,11 +153,17 @@
         ),
         scale(3),
       )}"
-      >Number of {color.slice(0, 1).toLocaleUpperCase() + color.slice(1)} Chips</NumericInput
+    >
+      Total {titleCase(color)} Chips</NumericInput
     >
   {/each}
+  <Button
+    on:click="{() => {
+      chips[colors.shift()] = 50;
+    }}">Add Chip Color</Button
+  >
 
-  <hr />
+  <h1 style:margin-top="calc(1em + 3px)">Results</h1>
 
   {#await solutionPromise}
     <div>Loading...</div>
@@ -144,7 +171,7 @@
     {#each Object.entries(solution ?? {}).sort(([_a, { value: a }], [_b, { value: b }]) => b - a) as [color, { amount, value }]}
       <div>
         <span class="chip" style:--color="{color}"></span>
-        {color.slice(0, 1).toLocaleUpperCase() + color.slice(1)}: {amount} &times;
+        {titleCase(color)}: {amount} &times;
         {dollars(value)}
         = {dollars(amount * value)}
       </div>
