@@ -49,14 +49,14 @@
   import { compose, roundToNearest, scale, dollars } from "./helpers.js";
   import { reloadModule, solve } from "./solve.js";
 
-  const colors = ["black", "purple", "yellow", "brown", "gray"];
+  const colors = ["Black", "Purple", "Yellow", "Brown", "Gray"];
 
   let numPeople = 7,
     chips = {
-      white: 50,
-      red: 50,
-      blue: 50,
-      green: 50,
+      White: 50,
+      Red: 50,
+      Blue: 50,
+      Green: 50,
     },
     chipsValuemultiple = 5,
     chipsMultiple = 1,
@@ -80,10 +80,6 @@
     console.error(e);
     reloadModule();
   });
-
-  function titleCase(s) {
-    return s.slice(0, 1).toLocaleUpperCase() + s.slice(1);
-  }
 </script>
 
 <div class="main">
@@ -154,12 +150,15 @@
         scale(3),
       )}"
     >
-      Total {titleCase(color)} Chips</NumericInput
+      Total {color} Chips</NumericInput
     >
   {/each}
   <Button
     on:click="{() => {
-      chips[colors.shift()] = 50;
+      const newColor = colors.shift();
+      if (!(newColor in chips)) {
+        chips[newColor] = 50;
+      }
     }}">Add Chip Color</Button
   >
 
@@ -170,8 +169,8 @@
   {:then solution}
     {#each Object.entries(solution ?? {}).sort(([_a, { value: a }], [_b, { value: b }]) => b - a) as [color, { amount, value }]}
       <div>
-        <span class="chip" style:--color="{color}"></span>
-        {titleCase(color)}: {amount} &times;
+        <span class="chip" style:--color="{color.toLocaleLowerCase()}"></span>
+        {color}: {amount} &times;
         {dollars(value)}
         = {dollars(amount * value)}
       </div>
