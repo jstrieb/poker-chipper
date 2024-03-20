@@ -31,8 +31,10 @@
 </style>
 
 <script>
+  import { compose, roundToNearest, scale } from "./helpers";
+
   export let value,
-    transform = (x) => x,
+    transforms = {},
     display = (x) => x,
     min = -Infinity,
     max = Infinity;
@@ -40,6 +42,11 @@
   let numInput,
     queued = 0,
     offset = 0;
+  $: transform = compose(
+    (x) => x * (transforms.finalScale ?? 1),
+    roundToNearest(...(transforms.round ?? [{ multiple: 1 }])),
+    scale(transforms.initialScale ?? 1),
+  );
 
   function minmax(x) {
     return Math.min(max, Math.max(min, x));

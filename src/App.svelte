@@ -46,7 +46,7 @@
   import Button from "./Button.svelte";
   import NumericInput from "./NumericInput.svelte";
 
-  import { compose, roundToNearest, scale, dollars } from "./helpers.js";
+  import { dollars } from "./helpers.js";
   import { reloadModule, solve } from "./solve.js";
 
   const colors = ["Black", "Purple", "Yellow", "Brown", "Gray"];
@@ -93,62 +93,64 @@
     </ul>
   </div>
   <h1>Inputs</h1>
-  <NumericInput bind:value="{numPeople}" min="1" transform="{scale(20)}"
-    >Number of Players</NumericInput
+  <NumericInput
+    bind:value="{numPeople}"
+    min="1"
+    transforms="{{ initialScale: 20 }}">Number of Players</NumericInput
   >
   <NumericInput
     bind:value="{buyIn}"
     display="{dollars}"
-    transform="{compose(
-      roundToNearest(
+    transforms="{{
+      round: [
         { limit: 10, multiple: 1 },
         { limit: 50, multiple: 5 },
         { multiple: 25 },
-      ),
-      scale(10),
-    )}"
+      ],
+      initialScale: 10,
+    }}"
     min="1">Buy In</NumericInput
   >
   <NumericInput
     bind:value="{blinds.big}"
     display="{dollars}"
-    transform="{compose(
-      (x) => x / 20,
-      roundToNearest(
+    transforms="{{
+      finalScale: 1 / 20,
+      round: [
         { limit: 5, multiple: 1 },
         { limit: 25, multiple: 5 },
         { multiple: 25 },
-      ),
-      scale(5),
-    )}"
+      ],
+      initialScale: 5,
+    }}"
     min="0.05">Big Blind</NumericInput
   >
   <NumericInput
     bind:value="{blinds.small}"
     display="{dollars}"
-    transform="{compose(
-      (x) => x / 20,
-      roundToNearest(
+    transforms="{{
+      finalScale: 1 / 20,
+      round: [
         { limit: 5, multiple: 1 },
         { limit: 25, multiple: 5 },
         { multiple: 25 },
-      ),
-      scale(5),
-    )}"
+      ],
+      initialScale: 5,
+    }}"
     min="0.05">Small Blind</NumericInput
   >
   {#each Object.keys(chips) as color}
     <NumericInput
       bind:value="{chips[color]}"
       min="1"
-      transform="{compose(
-        roundToNearest(
+      transforms="{{
+        round: [
           { limit: 10, multiple: 1 },
           { limit: 50, multiple: 5 },
           { multiple: 25 },
-        ),
-        scale(3),
-      )}"
+        ],
+        initialScale: 3,
+      }}"
     >
       Total {color} Chips</NumericInput
     >
