@@ -44,7 +44,7 @@
     offset = 0;
   $: transform = compose(
     (x) => x * (transforms.finalScale ?? 1),
-    roundToNearest(...(transforms.round ?? [{ multiple: 1 }])),
+    roundToNearest(initialValue, ...(transforms.round ?? [{ multiple: 1 }])),
     scale(transforms.initialScale ?? 1),
   );
 

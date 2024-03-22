@@ -12,17 +12,31 @@ export function roundToNearestPower(base) {
   };
 }
 
-export function roundToNearest(...values) {
+export function roundToNearest(initial, ...values) {
   values = values.sort((a, b) => a.multiple - b.multiple);
   return (x) => {
     const sign = Math.sign(x);
     x = Math.abs(x);
     for (let i = 0; i < values.length - 1; i++) {
-      if (x <= values[i].limit) {
-        return roundToNearestMultiple(values[i].multiple)(x) * sign;
+      // TODO: This code can be made substantially clearer and cleaner
+      const nextMultiple = values[i + 1].multiple;
+      const leftover = initial % nextMultiple;
+      const diff = (nextMultiple - leftover) % nextMultiple;
+      if (x <= values[i].limit + (sign > 0 ? diff : leftover)) {
+        const result =
+          (roundToNearestMultiple(values[i].multiple)(x + initial * sign) -
+            initial * sign) *
+          sign;
+        return result;
       }
     }
-    return roundToNearestMultiple(values[values.length - 1].multiple)(x) * sign;
+    const result =
+      (roundToNearestMultiple(values[values.length - 1].multiple)(
+        x + initial * sign,
+      ) -
+        initial * sign) *
+      sign;
+    return result;
   };
 }
 

@@ -149,7 +149,7 @@
           { limit: 50, multiple: 5 },
           { multiple: 25 },
         ],
-        initialScale: 3,
+        initialScale: 4,
       }}"
     >
       Total {color} Chips</NumericInput
