@@ -49,15 +49,21 @@
   import { dollars } from "./helpers.js";
   import { reloadModule, solve } from "./solve.js";
 
-  const colors = ["Black", "Purple", "Yellow", "Brown", "Gray"];
+  const colors = [
+    "White",
+    "Red",
+    "Blue",
+    "Green",
+    "Black",
+    "Purple",
+    "Yellow",
+    "Brown",
+    "Gray",
+  ];
+  let nextColor = 4;
 
   let numPeople = 7,
-    chips = {
-      White: 50,
-      Red: 50,
-      Blue: 50,
-      Green: 50,
-    },
+    chips = colors.slice(0, nextColor).map((c) => [c, 50]),
     chipsValuemultiple = 5,
     chipsMultiple = 1,
     buyIn = 1000,
@@ -129,9 +135,9 @@
     }}"
     min="5">Small Blind</NumericInput
   >
-  {#each Object.keys(chips) as color}
+  {#each chips as [color, value]}
     <NumericInput
-      bind:value="{chips[color]}"
+      bind:value
       min="1"
       transforms="{{
         round: [
@@ -147,10 +153,9 @@
   {/each}
   <Button
     on:click="{() => {
-      const newColor = colors.shift();
-      if (!(newColor in chips)) {
-        chips[newColor] = 50;
-      }
+      const newColor = colors[nextColor++ % colors.length];
+      chips.push([newColor, chips[chips.length - 1][1]]);
+      chips = chips;
     }}">Add Chip Color</Button
   >
 

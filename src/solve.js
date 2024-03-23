@@ -60,7 +60,7 @@ function buildCip(
 
   // Make variables to solve for the amount and value of each color
   const values = Object.fromEntries(
-    Object.keys(chips).map((color) => [
+    chips.map(([color, _]) => [
       color,
       {
         amount: addVar(`amount_${color}`, 1),
@@ -78,18 +78,21 @@ function buildCip(
     addCons(`<${mod(amount, chipsMultiple)}>[I] == 0`);
     // The amount of each chip times the number of people getting that many
     // chips must be less than the total number of chips of that color
-    addCons(`+${numPeople}<${amount}>[I] <= ${chips[color]}`);
+    addCons(
+      `+${numPeople}<${amount}>[I] <= ${chips.filter(([c, _]) => c == color)[0][1]}`,
+    );
   });
 
   // Impose a (semi-arbitrary) total order on the chip colors. Not strictly
   // necessary for the solver, but makes a lot of the constraints a lot easier
   // to express.
-  const orderedColors = Object.keys(chips).sort(
-    (c1, c2) => chips[c1] - chips[c2],
-  );
-  orderedColors.slice(0, -1).forEach((big_color, i) => {
+  const orderedColors = chips
+    .slice()
+    .sort(([c1, v1], [c2, v2]) => v1 - v2)
+    .map(([c, _]) => c);
+  orderedColors.slice(0, -1).forEach((bigColor, i) => {
     const smallColor = orderedColors[i + 1];
-    const bigValue = values[big_color].value;
+    const bigValue = values[bigColor].value;
     const smallValue = values[smallColor].value;
     // Actually impose the order on chip values
     addCons(`<${bigValue}>[I] -<${smallValue}>[I] >= 1`);
@@ -191,7 +194,7 @@ export async function solve(chips, ...args) {
     return undefined;
   }
   return Object.fromEntries(
-    Object.keys(chips).map((color) => [
+    chips.map(([color, _]) => [
       color,
       {
         amount: result[`amount_${color}`] ?? 0,
