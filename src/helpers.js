@@ -60,5 +60,5 @@ const formatter = Intl.NumberFormat(undefined, {
   currency: "USD",
 });
 export function dollars(x) {
-  return formatter.format(x);
+  return formatter.format(x / 100);
 }

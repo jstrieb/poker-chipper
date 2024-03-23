@@ -60,11 +60,11 @@
     },
     chipsValuemultiple = 5,
     chipsMultiple = 1,
-    buyIn = 10,
+    buyIn = 1000,
     buyInMultiple = 1,
     blinds = {
-      small: 0.1,
-      big: 0.2,
+      small: 10,
+      big: 20,
     },
     preferredMultiple = 25;
   $: solutionPromise = solve(
@@ -103,41 +103,31 @@
     display="{dollars}"
     transforms="{{
       round: [
-        { limit: 10, multiple: 1 },
-        { limit: 50, multiple: 5 },
-        { multiple: 25 },
+        { limit: 1000, multiple: 100 },
+        { limit: 5000, multiple: 500 },
+        { multiple: 2500 },
       ],
-      initialScale: 10,
+      initialScale: 1 / 10,
     }}"
-    min="1">Buy In</NumericInput
+    min="1000">Buy In</NumericInput
   >
   <NumericInput
     bind:value="{blinds.big}"
     display="{dollars}"
     transforms="{{
-      finalScale: 1 / 20,
-      round: [
-        { limit: 5, multiple: 1 },
-        { limit: 25, multiple: 5 },
-        { multiple: 25 },
-      ],
-      initialScale: 5,
+      round: [{ limit: 75, multiple: 5 }, { multiple: 25 }],
+      initialScale: 2,
     }}"
-    min="0.05">Big Blind</NumericInput
+    min="5">Big Blind</NumericInput
   >
   <NumericInput
     bind:value="{blinds.small}"
     display="{dollars}"
     transforms="{{
-      finalScale: 1 / 20,
-      round: [
-        { limit: 5, multiple: 1 },
-        { limit: 25, multiple: 5 },
-        { multiple: 25 },
-      ],
-      initialScale: 5,
+      round: [{ limit: 75, multiple: 5 }, { multiple: 25 }],
+      initialScale: 2,
     }}"
-    min="0.05">Small Blind</NumericInput
+    min="5">Small Blind</NumericInput
   >
   {#each Object.keys(chips) as color}
     <NumericInput
