@@ -23,10 +23,13 @@
     box-shadow: 2px 2px 0 0 var(--main-fg-color);
   }
 
-  hr {
-    border: none;
-    border-top: 3px solid var(--main-fg-color);
-    margin: 1em 0;
+  .buttons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: stretch;
+    gap: 1ch;
   }
 
   h1 {
@@ -160,18 +163,32 @@
           if (text !== e.target.textContent) {
             // TODO: Fix cursor reset
             color = text;
+            e.target.blur();
           }
         }}"
       ></span> Chips</NumericInput
     >
   {/each}
-  <Button
-    on:click="{() => {
-      const newColor = colors[nextColor++ % colors.length];
-      chips.push([newColor, chips[chips.length - 1][1]]);
-      chips = chips;
-    }}">Add Chip Color</Button
-  >
+  <div class="buttons">
+    <Button
+      style="flex-grow: 1; width: 50%;"
+      on:click="{() => {
+        const newColor = colors[nextColor++ % colors.length];
+        chips.push([newColor, chips[chips.length - 1][1]]);
+        chips = chips;
+      }}">Add Color</Button
+    >
+    <Button
+      style="flex-grow: 1; width: 50%;"
+      on:click="{() => {
+        if (chips.length > 1) {
+          nextColor--;
+          chips.pop();
+          chips = chips;
+        }
+      }}">Remove Color</Button
+    >
+  </div>
 
   <h1 style:margin-top="calc(1em + 3px)">Results</h1>
 
@@ -187,6 +204,7 @@
             const text = e.target.textContent.replaceAll(/[^a-zA-Z]+/g, '');
             if (text !== e.target.textContent) {
               // TODO: Fix cursor reset
+              e.target.blur();
               color = text;
             }
           }}"
