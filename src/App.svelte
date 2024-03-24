@@ -32,6 +32,31 @@
     gap: 1ch;
   }
 
+  .table-container {
+    max-width: 100%;
+    overflow: auto;
+  }
+
+  table {
+    table-layout: fixed;
+  }
+
+  td {
+    text-align: left;
+    vertical-align: baseline;
+    white-space: pre;
+    padding: 0 0.5ch;
+  }
+
+  td:first-of-type {
+    padding-left: 0;
+  }
+
+  td:last-of-type {
+    width: 100%;
+    padding-right: 0;
+  }
+
   h1 {
     margin: 1em 0;
   }
@@ -195,30 +220,44 @@
   {#await solutionPromise}
     <div>Loading...</div>
   {:then solution}
-    {#each Object.entries(solution ?? {}) as [color, { amount, value }]}
-      <div>
-        <span class="chip" style:--color="{color.toLocaleLowerCase()}"></span>
-        <span
-          contenteditable="true"
-          on:input="{(e) => {
-            const text = e.target.textContent.replaceAll(/[^a-zA-Z]+/g, '');
-            if (text !== e.target.textContent) {
-              // TODO: Fix cursor reset
-              e.target.blur();
-              color = text;
-            }
-          }}"
-          on:blur="{(e) => {
-            const text = e.target.textContent;
-            chips[chips.map(([c, _]) => c).indexOf(color)][0] = text;
-          }}">{color}</span
-        >: {amount}
-        &times;
-        {dollars(value)}
-        = {dollars(amount * value)}
-      </div>
-    {:else}
-      <div>No valid solution found!</div>
-    {/each}
+    <div class="table-container">
+      <table>
+        <tbody>
+          {#each Object.entries(solution ?? {}) as [color, { amount, value }]}
+            <tr>
+              <td>
+                <span class="chip" style:--color="{color.toLocaleLowerCase()}"
+                ></span>
+                <span
+                  contenteditable="true"
+                  on:input="{(e) => {
+                    const text = e.target.textContent.replaceAll(
+                      /[^a-zA-Z]+/g,
+                      '',
+                    );
+                    if (text !== e.target.textContent) {
+                      // TODO: Fix cursor reset
+                      e.target.blur();
+                      color = text;
+                    }
+                  }}"
+                  on:blur="{(e) => {
+                    const text = e.target.textContent;
+                    chips[chips.map(([c, _]) => c).indexOf(color)][0] = text;
+                  }}">{color}</span
+                >
+              </td>
+              <td><b>{amount}</b> chips</td>
+              <td>&times;</td>
+              <td><b>{dollars(value)}</b> each</td>
+              <td>=</td>
+              <td><b>{dollars(amount * value)}</b> total</td>
+            </tr>
+          {:else}
+            <div>No valid solution found!</div>
+          {/each}
+        </tbody>
+      </table>
+    </div>
   {/await}
 </div>
