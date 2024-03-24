@@ -239,12 +239,12 @@
 
   <h1 style:margin-top="calc(1em + 3px)">Results</h1>
 
-  {#await solutionPromise}
-    <div>Loading...</div>
-  {:then solution}
-    <div class="table-container">
-      <table>
-        <tbody>
+  <div class="table-container">
+    <table>
+      <tbody>
+        {#await solutionPromise}
+          <div>Loading...</div>
+        {:then solution}
           {#each Object.entries(solution ?? {}) as [color, { amount, value }]}
             <tr>
               <td>
@@ -276,15 +276,17 @@
               <td>=</td>
               <td><b>{dollars(amount * value)}</b> total</td>
             </tr>
+          {/each}
+          {#if solution}
+            <tr><td colspan="6"><hr /></td></tr>
+            <tr><td colspan="5"></td><td><b>{dollars(buyIn)}</b> total</td></tr>
           {:else}
             <div>No valid solution found!</div>
-          {/each}
-          <tr><td colspan="6"><hr /></td></tr>
-          <tr><td colspan="5"></td><td><b>{dollars(buyIn)}</b> total</td></tr>
-        </tbody>
-      </table>
-    </div>
-  {/await}
+          {/if}
+        {/await}
+      </tbody>
+    </table>
+  </div>
 </div>
 <footer>
   <p>
