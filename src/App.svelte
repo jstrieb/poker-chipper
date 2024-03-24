@@ -1,5 +1,6 @@
 <style>
-  .main {
+  .main,
+  footer {
     max-width: 50ch;
     width: 100%;
     margin: 2em 0;
@@ -79,6 +80,12 @@
 
   span {
     text-transform: capitalize;
+  }
+
+  footer {
+    flex-grow: 1;
+    justify-content: flex-end;
+    text-align: center;
   }
 </style>
 
@@ -273,3 +280,9 @@
     </div>
   {/await}
 </div>
+<footer>
+  <p>
+    Created by <a href="https://jstrieb.github.io">Jacob Strieb</a>.
+    <!-- Check out the code <a href="https://github.com/jstrieb/poker-chipper">on GitHub</a>. -->
+  </p>
+</footer>
