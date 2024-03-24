@@ -33,19 +33,21 @@
   }
 
   .table-container {
+    width: 100%;
     max-width: 100%;
     overflow: auto;
   }
 
   table {
-    table-layout: fixed;
+    width: fit-content;
+    margin: auto;
   }
 
   td {
     text-align: left;
     vertical-align: baseline;
     white-space: pre;
-    padding: 0 0.5ch;
+    padding: 0 clamp(0.25ch, 1vw, 1ch);
   }
 
   td:first-of-type {
