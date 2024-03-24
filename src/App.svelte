@@ -41,13 +41,14 @@
   table {
     width: fit-content;
     margin: auto;
+    border-collapse: collapse;
   }
 
   td {
     text-align: left;
     vertical-align: baseline;
     white-space: pre;
-    padding: 0 clamp(0.25ch, 1vw, 1ch);
+    padding: 0.25em clamp(0.25ch, 1vw, 1ch);
   }
 
   td:first-of-type {
@@ -57,6 +58,11 @@
   td:last-of-type {
     width: 100%;
     padding-right: 0;
+  }
+
+  hr {
+    border: none;
+    border-top: 1.5px solid var(--main-fg-color);
   }
 
   h1 {
@@ -258,6 +264,8 @@
           {:else}
             <div>No valid solution found!</div>
           {/each}
+          <tr><td colspan="6"><hr /></td></tr>
+          <tr><td colspan="5"></td><td><b>{dollars(buyIn)}</b> total</td></tr>
         </tbody>
       </table>
     </div>
