@@ -40,6 +40,10 @@
   ul {
     margin: 0 1em;
   }
+
+  span {
+    text-transform: capitalize;
+  }
 </style>
 
 <script>
@@ -50,15 +54,15 @@
   import { reloadModule, solve } from "./solve.js";
 
   const colors = [
-    "White",
-    "Red",
-    "Blue",
-    "Green",
-    "Black",
-    "Purple",
-    "Yellow",
-    "Brown",
-    "Gray",
+    "white",
+    "red",
+    "blue",
+    "green",
+    "black",
+    "purple",
+    "yellow",
+    "brown",
+    "gray",
   ];
   let nextColor = 4;
 
@@ -94,7 +98,7 @@
     <ul>
       <li>Drag or tap numbers to change their value</li>
       <li>Tap the button to add an additional chip color</li>
-      <li>Tap any color to edit it</li>
+      <li>Tap any color name to edit it</li>
       <li>Optimal results are computed live at the bottom</li>
     </ul>
   </div>
@@ -148,7 +152,17 @@
         initialScale: 4,
       }}"
     >
-      Total {color} Chips</NumericInput
+      Total <span
+        contenteditable="true"
+        bind:textContent="{color}"
+        on:input="{(e) => {
+          const text = e.target.textContent.replaceAll(/[^a-zA-Z]+/g, '');
+          if (text !== e.target.textContent) {
+            // TODO: Fix cursor reset
+            color = text;
+          }
+        }}"
+      ></span> Chips</NumericInput
     >
   {/each}
   <Button
@@ -164,10 +178,24 @@
   {#await solutionPromise}
     <div>Loading...</div>
   {:then solution}
-    {#each Object.entries(solution ?? {}).sort(([_a, { value: a }], [_b, { value: b }]) => b - a) as [color, { amount, value }]}
+    {#each Object.entries(solution ?? {}) as [color, { amount, value }]}
       <div>
         <span class="chip" style:--color="{color.toLocaleLowerCase()}"></span>
-        {color}: {amount} &times;
+        <span
+          contenteditable="true"
+          on:input="{(e) => {
+            const text = e.target.textContent.replaceAll(/[^a-zA-Z]+/g, '');
+            if (text !== e.target.textContent) {
+              // TODO: Fix cursor reset
+              color = text;
+            }
+          }}"
+          on:blur="{(e) => {
+            const text = e.target.textContent;
+            chips[chips.map(([c, _]) => c).indexOf(color)][0] = text;
+          }}">{color}</span
+        >: {amount}
+        &times;
         {dollars(value)}
         = {dollars(amount * value)}
       </div>

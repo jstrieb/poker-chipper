@@ -52,8 +52,6 @@
   }
 
   function pointerdown(e) {
-    e.stopPropagation();
-    e.preventDefault();
     numInput.addEventListener("pointermove", pointermove);
     numInput.setPointerCapture(e.pointerId);
     const { left, right } = e.target.getBoundingClientRect();
@@ -62,8 +60,6 @@
   }
 
   function pointerup(e) {
-    e.stopPropagation();
-    e.preventDefault();
     numInput.removeEventListener("pointermove", pointermove);
     numInput.releasePointerCapture(e.pointerId);
     queued = 0;
@@ -73,6 +69,7 @@
 
   function pointermove(e) {
     e.stopPropagation();
+    e.stopImmediatePropagation();
     e.preventDefault();
     const { left, right } = e.target.getBoundingClientRect();
     const width = right - left;
@@ -86,8 +83,8 @@
   <div
     class="input"
     bind:this="{numInput}"
-    on:pointerdown="{pointerdown}"
-    on:pointerup="{pointerup}"
+    on:pointerdown|stopPropagation|preventDefault|stopImmediatePropagation|capture="{pointerdown}"
+    on:pointerup|stopPropagation|preventDefault|stopImmediatePropagation|capture="{pointerup}"
   >
     {display(value)}
   </div>

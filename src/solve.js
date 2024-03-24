@@ -178,7 +178,7 @@ export async function solve(chips, ...args) {
   const rawSolution = new TextDecoder().decode(FS.readFile("solution.txt"));
   FS.unlink("solution.txt");
   const lines = rawSolution.split("\n").slice(2);
-  const result = Object.fromEntries(
+  const solution = Object.fromEntries(
     lines
       .map((l) => {
         const m = l.match(/(\w+)\s+(\d+).*/);
@@ -190,16 +190,16 @@ export async function solve(chips, ...args) {
       .filter((x) => x)
       .filter(([k, _]) => !k.match(/x\d+/)),
   );
-  if (Object.entries(result).length === 0) {
+  if (Object.entries(solution).length === 0) {
     return undefined;
   }
-  return Object.fromEntries(
-    chips.map(([color, _]) => [
-      color,
-      {
-        amount: result[`amount_${color}`] ?? 0,
-        value: result[`value_${color}`] ?? 0,
-      },
-    ]),
-  );
+  const result = chips.map(([color, _]) => [
+    color,
+    {
+      amount: solution[`amount_${color}`] ?? 0,
+      value: solution[`value_${color}`] ?? 0,
+    },
+  ]);
+  result.sort(([_a, { value: a }], [_b, { value: b }]) => b - a);
+  return Object.fromEntries(result);
 }
