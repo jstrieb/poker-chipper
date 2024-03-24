@@ -133,6 +133,10 @@
     console.error(e);
     reloadModule();
   });
+
+  function select(e) {
+    window.getSelection().selectAllChildren(e.target);
+  }
 </script>
 
 <div class="main">
@@ -142,8 +146,8 @@
     <br />
     <ul>
       <li>Drag or tap numbers to change their value</li>
-      <li>Use the buttons to add or remove additional chip colors</li>
-      <li>Tap any color name to edit it</li>
+      <li>Use the buttons to add or remove chip colors</li>
+      <li>Tap any color to edit it</li>
       <li>Results are computed at the bottom</li>
     </ul>
   </div>
@@ -200,6 +204,7 @@
       Total <span
         contenteditable="true"
         bind:textContent="{color}"
+        on:focus="{select}"
         on:input="{(e) => {
           const text = e.target.textContent.replaceAll(/[^a-zA-Z]+/g, '');
           if (text !== e.target.textContent) {
@@ -247,6 +252,7 @@
                 ></span>
                 <span
                   contenteditable="true"
+                  on:focus="{select}"
                   on:input="{(e) => {
                     const text = e.target.textContent.replaceAll(
                       /[^a-zA-Z]+/g,
