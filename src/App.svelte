@@ -254,8 +254,8 @@
                     );
                     if (text !== e.target.textContent) {
                       // TODO: Fix cursor reset
+                      e.target.textContent = text;
                       e.target.blur();
-                      color = text;
                     }
                   }}"
                   on:blur="{(e) => {
