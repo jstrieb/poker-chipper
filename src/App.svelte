@@ -131,11 +131,13 @@
 <div class="main">
   <h1>Instructions</h1>
   <div class="instructions">
+    <p>Optimally compute poker chip values for a home game.</p>
+    <br />
     <ul>
       <li>Drag or tap numbers to change their value</li>
-      <li>Tap the button to add an additional chip color</li>
+      <li>Use the buttons to add or remove additional chip colors</li>
       <li>Tap any color name to edit it</li>
-      <li>Optimal results are computed live at the bottom</li>
+      <li>Results are computed at the bottom</li>
     </ul>
   </div>
   <h1>Inputs</h1>
