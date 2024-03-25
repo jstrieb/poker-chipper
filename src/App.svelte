@@ -46,7 +46,7 @@
   }
 
   td {
-    text-align: left;
+    text-align: center;
     vertical-align: baseline;
     white-space: pre;
     padding: 0.25em clamp(0.25ch, 1vw, 1ch);
@@ -54,10 +54,10 @@
 
   td:first-of-type {
     padding-left: 0;
+    text-align: left;
   }
 
   td:last-of-type {
-    width: 100%;
     padding-right: 0;
   }
 
