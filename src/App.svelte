@@ -93,7 +93,7 @@
   import Button from "./Button.svelte";
   import NumericInput from "./NumericInput.svelte";
 
-  import { dollars } from "./helpers.js";
+  import { debounce, dollars } from "./helpers.js";
   import { reloadModule, solve } from "./solve.js";
 
   const colors = [
@@ -120,7 +120,15 @@
       big: 20,
     },
     preferredMultiple = 25;
-  $: solutionPromise = solve(
+
+  let solutionPromise = new Promise((r) => r());
+  const debouncedSolve = debounce((...args) => {
+    solutionPromise = solve(...args).catch((e) => {
+      console.error(e);
+      reloadModule();
+    });
+  }, 500);
+  $: debouncedSolve(
     chips,
     numPeople,
     chipsValuemultiple,
@@ -129,10 +137,7 @@
     buyInMultiple,
     blinds,
     preferredMultiple,
-  ).catch((e) => {
-    console.error(e);
-    reloadModule();
-  });
+  );
 
   function select(e) {
     window.getSelection().selectAllChildren(e.target);
