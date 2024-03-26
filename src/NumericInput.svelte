@@ -32,6 +32,7 @@
 </style>
 
 <script>
+  import { spring } from "svelte/motion";
   import { compose, roundToNearest, scale } from "./helpers";
 
   export let value,
@@ -42,7 +43,9 @@
   let initialValue = value;
   let numInput,
     queued = 0,
-    offset = 0;
+    offset = 0,
+    deltaX = spring(0, { stiffness: 0.15, damping: 0.3 });
+  let boxWidth;
   $: transform = compose(
     roundToNearest(initialValue, ...(transforms.round ?? [{ multiple: 1 }])),
     scale(transforms.initialScale ?? 1),
@@ -52,12 +55,16 @@
     return Math.min(max, Math.max(min, x));
   }
 
+  function bound(x, y) {
+    return Math.min(y, Math.max(-y, x));
+  }
+
   function pointerdown(e) {
     numInput.addEventListener("pointermove", pointermove);
     numInput.setPointerCapture(e.pointerId);
     const { left, right } = e.target.getBoundingClientRect();
-    const width = right - left;
-    offset = e.clientX - left - Math.floor(width / 2);
+    boxWidth = right - left;
+    offset = e.clientX - left - Math.floor(boxWidth / 2);
   }
 
   function pointerup(e) {
@@ -65,13 +72,17 @@
     numInput.releasePointerCapture(e.pointerId);
     queued = 0;
     offset = 0;
+    deltaX.set(0);
     initialValue = value;
   }
 
   function pointermove(e) {
     const { left, right } = e.target.getBoundingClientRect();
-    const width = right - left;
-    queued = transform(e.clientX - offset - left - Math.floor(width / 2));
+    boxWidth = right - left;
+    deltaX.set(e.clientX - offset - left - Math.floor(boxWidth / 2), {
+      hard: true,
+    });
+    queued = transform($deltaX);
     value = minmax(initialValue + queued);
   }
 </script>
@@ -84,6 +95,12 @@
     on:pointerdown="{pointerdown}"
     on:pointerup="{pointerup}"
   >
-    {display(value)}
+    <span
+      style:transform="translateX(calc({-1 * bound($deltaX, boxWidth / 2)}px + {bound(
+        $deltaX,
+        boxWidth / 2,
+      ) /
+        (boxWidth / 2)} * 4ch))">{display(value)}</span
+    >
   </div>
 </div>
