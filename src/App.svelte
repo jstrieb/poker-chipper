@@ -128,7 +128,7 @@
       big: 20,
     },
     preferredMultiple = 25;
-  let solution;
+  let solution = "Loading...";
 
   const optimizer = new Worker(new URL("./solveWorker.js", import.meta.url));
   optimizer.addEventListener("message", (e) => {
@@ -261,7 +261,9 @@
   <div class="table-container">
     <table>
       <tbody>
-        {#if solution}
+        {#if typeof solution === "string"}
+          <div>{solution}</div>
+        {:else if solution}
           {#each Object.entries(solution) as [color, { amount, value }]}
             <tr>
               <td>
