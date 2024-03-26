@@ -1,7 +1,7 @@
-import createSCIP from "./compiled/scip.js";
+importScripts("./compiled/scip.js");
 
 let modulePromise;
-export function reloadModule() {
+function reloadModule() {
   modulePromise = createSCIP({
     arguments: ["-q", "-c", "quit"],
   });
@@ -150,7 +150,7 @@ END
  * the optimal values for us, subject to an "objective" function we subjectively
  * create.
  */
-export async function solve(chips, ...args) {
+async function solve(chips, ...args) {
   if (args.some((x) => x == null)) {
     return undefined;
   }

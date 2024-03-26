@@ -130,9 +130,7 @@
     preferredMultiple = 25;
   let solution;
 
-  const optimizer = new Worker(new URL("./solveWorker.js", import.meta.url), {
-    type: "module",
-  });
+  const optimizer = new Worker(new URL("./solveWorker.js", import.meta.url));
   optimizer.addEventListener("message", (e) => {
     if (e.data.error) {
       console.error(e.data.error);

@@ -1,5 +1,12 @@
-import { debounce } from "./helpers.js";
-import { reloadModule, solve } from "./solve.js";
+importScripts("./solve.js");
+
+function debounce(f, delay) {
+  let t;
+  return (...args) => {
+    clearTimeout(t);
+    t = setTimeout(() => f(...args), delay);
+  };
+}
 
 let solutionPromise = new Promise((r) => r());
 const debouncedSolve = debounce((...args) => {

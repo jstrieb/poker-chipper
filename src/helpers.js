@@ -62,11 +62,3 @@ const formatter = Intl.NumberFormat(undefined, {
 export function dollars(x) {
   return formatter.format(x / 100);
 }
-
-export function debounce(f, delay) {
-  let t;
-  return (...args) => {
-    clearTimeout(t);
-    t = setTimeout(() => f(...args), delay);
-  };
-}

@@ -50,7 +50,7 @@ RUN curl -o 'scipoptsuite-8.1.0.tgz' 'https://scipopt.org/download/release/scipo
 
 WORKDIR /scipoptsuite-8.1.0
 # RUN vcpkg install gmp:wasm32-emscripten
-ENV CXXFLAGS="-sINVOKE_RUN=0 -sFILESYSTEM=1 -sFORCE_FILESYSTEM=1 -sMODULARIZE=1 -sEXPORT_NAME=createSCIP -sEXPORTED_RUNTIME_METHODS=FS,callMain -sEXPORT_ES6=1 -sWASM=2"
+ENV CXXFLAGS="-sINVOKE_RUN=0 -sFILESYSTEM=1 -sFORCE_FILESYSTEM=1 -sMODULARIZE=1 -sEXPORT_NAME=createSCIP -sEXPORTED_RUNTIME_METHODS=FS,callMain -sWASM=2"
 RUN mkdir build \
   && cd build \
   && emcmake cmake .. -DNO_EXTERNAL_CODE=on -DBUILD_TESTING=off \
