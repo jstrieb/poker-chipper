@@ -43,7 +43,7 @@
   let initialValue = value;
   let numInput,
     queued = 0,
-    offset = 0,
+    pointerStart = 0,
     deltaX = spring(0, { stiffness: 0.15, damping: 0.3 });
   let boxWidth;
   $: transform = compose(
@@ -64,14 +64,14 @@
     numInput.setPointerCapture(e.pointerId);
     const { left, right } = e.target.getBoundingClientRect();
     boxWidth = right - left;
-    offset = e.clientX - left - Math.floor(boxWidth / 2);
+    pointerStart = e.clientX;
   }
 
   function pointerup(e) {
     numInput.removeEventListener("pointermove", pointermove);
     numInput.releasePointerCapture(e.pointerId);
     queued = 0;
-    offset = 0;
+    pointerStart = 0;
     deltaX.set(0);
     initialValue = value;
   }
@@ -79,10 +79,10 @@
   function pointermove(e) {
     const { left, right } = e.target.getBoundingClientRect();
     boxWidth = right - left;
-    deltaX.set(e.clientX - offset - left - Math.floor(boxWidth / 2), {
+    deltaX.set(-1 * sigmoid((e.clientX - pointerStart) / 10), {
       hard: true,
     });
-    queued = transform($deltaX);
+    queued = transform(e.clientX - pointerStart);
     value = minmax(initialValue + queued);
   }
 </script>
@@ -96,8 +96,8 @@
     on:pointerup="{pointerup}"
   >
     <span
-      style:transform="translateX(calc({-1 * sigmoid($deltaX / 10)} * ({boxWidth /
-        2}px - 4ch)))">{display(value)}</span
+      style:transform="translateX(calc({$deltaX} * ({boxWidth / 2}px - 4ch)))"
+      >{display(value)}</span
     >
   </div>
 </div>
