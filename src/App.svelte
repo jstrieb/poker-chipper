@@ -102,8 +102,7 @@
   import Button from "./Button.svelte";
   import NumericInput from "./NumericInput.svelte";
 
-  import { debounce, dollars } from "./helpers.js";
-  import { reloadModule, solve } from "./solve.js";
+  import { dollars } from "./helpers.js";
 
   const colors = [
     "white",
@@ -129,15 +128,19 @@
       big: 20,
     },
     preferredMultiple = 25;
+  let solution;
 
-  let solutionPromise = new Promise((r) => r());
-  const debouncedSolve = debounce((...args) => {
-    solutionPromise = solve(...args).catch((e) => {
-      console.error(e);
-      reloadModule();
-    });
-  }, 200);
-  $: debouncedSolve(
+  const optimizer = new Worker(new URL("./solveWorker.js", import.meta.url), {
+    type: "module",
+  });
+  optimizer.addEventListener("message", (e) => {
+    if (e.data.error) {
+      console.error(e.data.error);
+    } else {
+      solution = e.data.data;
+    }
+  });
+  $: optimizer.postMessage([
     chips,
     numPeople,
     chipsValuemultiple,
@@ -146,7 +149,7 @@
     buyInMultiple,
     blinds,
     preferredMultiple,
-  );
+  ]);
 
   function select(e) {
     window.getSelection().selectAllChildren(e.target);
@@ -260,10 +263,8 @@
   <div class="table-container">
     <table>
       <tbody>
-        {#await solutionPromise}
-          <div>Loading...</div>
-        {:then solution}
-          {#each Object.entries(solution ?? {}) as [color, { amount, value }]}
+        {#if solution}
+          {#each Object.entries(solution) as [color, { amount, value }]}
             <tr>
               <td>
                 <span class="chip" style:--color="{color.toLocaleLowerCase()}"
@@ -295,13 +296,11 @@
               <td><b>{dollars(amount * value)}</b> total</td>
             </tr>
           {/each}
-          {#if solution}
-            <tr><td colspan="6"><hr /></td></tr>
-            <tr><td colspan="5"></td><td><b>{dollars(buyIn)}</b> total</td></tr>
-          {:else}
-            <div>No valid solution found!</div>
-          {/if}
-        {/await}
+          <tr><td colspan="6"><hr /></td></tr>
+          <tr><td colspan="5"></td><td><b>{dollars(buyIn)}</b> total</td></tr>
+        {:else}
+          <div>No valid solution found!</div>
+        {/if}
       </tbody>
     </table>
   </div>
