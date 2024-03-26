@@ -55,8 +55,8 @@
     return Math.min(max, Math.max(min, x));
   }
 
-  function bound(x, y) {
-    return Math.min(y, Math.max(-y, x));
+  function sigmoid(x) {
+    return x / (1 + Math.abs(x));
   }
 
   function pointerdown(e) {
@@ -96,11 +96,8 @@
     on:pointerup="{pointerup}"
   >
     <span
-      style:transform="translateX(calc({-1 * bound($deltaX, boxWidth / 2)}px + {bound(
-        $deltaX,
-        boxWidth / 2,
-      ) /
-        (boxWidth / 2)} * 4ch))">{display(value)}</span
+      style:transform="translateX(calc({-1 * sigmoid($deltaX / 10)} * ({boxWidth /
+        2}px - 4ch)))">{display(value)}</span
     >
   </div>
 </div>
