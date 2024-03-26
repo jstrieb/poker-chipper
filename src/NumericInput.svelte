@@ -68,9 +68,6 @@
   }
 
   function pointermove(e) {
-    e.stopPropagation();
-    e.stopImmediatePropagation();
-    e.preventDefault();
     const { left, right } = e.target.getBoundingClientRect();
     const width = right - left;
     queued = transform(e.clientX - offset - left - Math.floor(width / 2));
@@ -83,8 +80,8 @@
   <div
     class="input"
     bind:this="{numInput}"
-    on:pointerdown|stopPropagation|preventDefault|stopImmediatePropagation|capture="{pointerdown}"
-    on:pointerup|stopPropagation|preventDefault|stopImmediatePropagation|capture="{pointerup}"
+    on:pointerdown="{pointerdown}"
+    on:pointerup="{pointerup}"
   >
     {display(value)}
   </div>
