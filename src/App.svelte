@@ -24,6 +24,12 @@
     box-shadow: 2px 2px 0 0 var(--main-fg-color);
   }
 
+  .underline {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-decoration-color: var(--color, var(--main-fg-color));
+  }
+
   .buttons {
     display: flex;
     flex-direction: row;
@@ -80,6 +86,7 @@
 
   span {
     text-transform: capitalize;
+    cursor: pointer;
   }
 
   footer {
@@ -127,7 +134,7 @@
       console.error(e);
       reloadModule();
     });
-  }, 500);
+  }, 200);
   $: debouncedSolve(
     chips,
     numPeople,
@@ -208,6 +215,10 @@
     >
       Total <span
         contenteditable="true"
+        class:underline="{true}"
+        style:--color="{color.toLocaleLowerCase() !== "white"
+          ? color
+          : "black"}"
         bind:textContent="{color}"
         on:focus="{select}"
         on:input="{(e) => {

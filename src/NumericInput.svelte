@@ -11,6 +11,7 @@
 
   div span {
     white-space: pre;
+    margin-bottom: 2px;
   }
 
   .input {
