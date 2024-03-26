@@ -25,9 +25,11 @@
   }
 
   .underline {
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
-    text-decoration-color: var(--color, var(--main-fg-color));
+    border-bottom: 2px solid var(--color, var(--main-fg-color));
+    padding: 0 0.3ch;
+    margin: 0 -0.1ch;
+    display: inline-block;
+    line-height: 0.9;
   }
 
   .buttons {
