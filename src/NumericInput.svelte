@@ -4,12 +4,12 @@
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: flex-start;
-    align-items: baseline;
+    align-items: center;
     gap: 0 1ch;
     max-width: 100%;
   }
 
-  div span {
+  .label {
     white-space: pre;
     margin-bottom: 2px;
   }
@@ -88,7 +88,7 @@
 </script>
 
 <div>
-  <span><slot /></span>
+  <span class="label"><slot /></span>
   <div
     class="input"
     bind:this="{numInput}"
