@@ -28,6 +28,7 @@ body {
   font-family: sans-serif;
   background: var(--main-bg-color);
   color: var(--main-fg-color);
+  touch-action: pan-y pinch-zoom;
 }
 
 body {
