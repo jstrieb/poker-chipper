@@ -182,7 +182,7 @@
       ],
       initialScale: 1 / 10,
     }}"
-    min="1000">Buy In</NumericInput
+    min="100">Buy In</NumericInput
   >
   <NumericInput
     bind:value="{blinds.big}"
