@@ -125,7 +125,6 @@
     chipsValuemultiple = 5,
     chipsMultiple = 1,
     buyIn = 1000,
-    buyInMultiple = 1,
     blinds = {
       small: 10,
       big: 20,
@@ -145,7 +144,6 @@
     chipsValuemultiple,
     chipsMultiple,
     buyIn,
-    buyInMultiple,
     blinds,
     preferredMultiple,
   );

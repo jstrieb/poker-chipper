@@ -13,8 +13,7 @@ function buildCip(
   numPeople,
   chipsValueInterval,
   chipsMultiple,
-  _buyIn,
-  buyInMultiple,
+  buyIn,
   blinds,
   preferredMultiple,
 ) {
@@ -52,11 +51,6 @@ function buildCip(
     }
     return r;
   }
-
-  // TODO: Handle buy in ranges and buy in multiple
-  const buyIn = addVar("buy_in");
-  addCons(`<${buyIn}>[I] == ${_buyIn}`);
-  addCons(`<${mod(buyIn, buyInMultiple)}>[I] == 0`);
 
   // Make variables to solve for the amount and value of each color
   const values = Object.fromEntries(
@@ -109,7 +103,7 @@ function buildCip(
   });
 
   // The max value chip should never be more than ~20% of the total buy-in
-  addCons(`<${values[orderedColors[0]].value}>[I] <= ${_buyIn / 5}`);
+  addCons(`<${values[orderedColors[0]].value}>[I] <= ${buyIn / 5}`);
 
   if (blinds) {
     const { small, big } = blinds;
@@ -124,7 +118,7 @@ function buildCip(
 
   // The chips given to each person must sum to the buy in
   addCons(
-    `<${buyIn}>-${Object.values(values)
+    `${buyIn}-${Object.values(values)
       .map(({ amount, value }) => `<${amount}>*<${value}>`)
       .join("-")} == 0`,
     "nonlinear",
