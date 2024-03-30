@@ -79,9 +79,17 @@
   function pointermove(e) {
     const { left, right } = e.target.getBoundingClientRect();
     boxWidth = right - left;
-    deltaX.set(-1 * sigmoid((e.clientX - pointerStart) / 10), {
-      hard: true,
-    });
+    const sign = -1 * Math.sign(e.clientX - pointerStart);
+    deltaX.set(
+      sign *
+        Math.min(
+          Math.abs(sigmoid((e.clientX - pointerStart) / 10)),
+          Math.abs((e.clientX - pointerStart) / (boxWidth / 2)),
+        ),
+      {
+        hard: true,
+      },
+    );
     queued = transform(e.clientX - pointerStart);
     value = minmax(initialValue + queued);
   }
