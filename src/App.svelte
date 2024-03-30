@@ -20,8 +20,10 @@
     border: 1px solid var(--main-fg-color);
     border-radius: 50%;
     position: relative;
-    bottom: -0.1em;
+    bottom: 0.4em;
     box-shadow: 2px 2px 0 0 var(--main-fg-color);
+    cursor: pointer;
+    margin-right: 0.5ch;
   }
 
   .underline {
@@ -266,9 +268,11 @@
           {#each Object.entries(solution ?? {}) as [color, { amount, value }]}
             <tr>
               <td>
-                <span class="chip" style:--color="{color.toLocaleLowerCase()}"
-                ></span>
-                <span
+                <button
+                  class="chip"
+                  style:--color="{color.toLocaleLowerCase()}"
+                  on:click="{(e) => e.target.nextElementSibling.focus()}"
+                ></button><span
                   contenteditable="true"
                   on:focus="{select}"
                   on:input="{(e) => {
