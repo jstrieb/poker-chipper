@@ -127,7 +127,7 @@
     buyIn = 1000,
     blinds = {
       small: 10,
-      big: 20,
+      big: 25,
     },
     preferredMultiple = 25;
 

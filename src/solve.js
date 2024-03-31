@@ -81,7 +81,7 @@ function buildCip(
   // necessary for the solver, but makes a lot of the constraints a lot easier
   // to express.
   const orderedColors = chips
-    .slice()
+    .slice() // Necessary to avoid destructively mutating the array
     .sort(([c1, v1], [c2, v2]) => v1 - v2)
     .map(([c, _]) => c);
   orderedColors.slice(0, -1).forEach((bigColor, i) => {
@@ -106,15 +106,32 @@ function buildCip(
   addCons(`<${values[orderedColors[0]].value}>[I] <= ${buyIn / 5}`);
 
   if (blinds) {
-    const { small, big } = blinds;
+    const { small } = blinds;
     // The smallest valued chip should be equal to the small blind
     addCons(
       `<${values[orderedColors[orderedColors.length - 1]].value}>[I] == ${small}`,
     );
-    // We should be able to create the big blind from (at most) a couple of one
-    // of the types of chips
-    // TODO: Disjunction
   }
+  // We should be able to create the big blind from (at most) a couple of one of
+  // the types of chips
+  function anonLinear(s) {
+    return `[linear] <>: ${s}`;
+  }
+  addCons(
+    "disjunction( " +
+      Object.entries(values)
+        .map(([_, { value }]) => {
+          return [
+            anonLinear(`<${value}>[I] == ${blinds.big}`),
+            anonLinear(`<${value}>[I] * 2 == ${blinds.big}`),
+            anonLinear(`<${value}>[I] * 3 == ${blinds.big}`),
+          ];
+        })
+        .flat()
+        .join(", ") +
+      " )",
+    "disjunction",
+  );
 
   // The chips given to each person must sum to the buy in
   addCons(
