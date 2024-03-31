@@ -38,6 +38,14 @@ function buildCip(
     constraints.push(`  [${type}] <${name}>: ${text};`);
   }
 
+  function anonLinear(s) {
+    return `[linear] <>: ${s}`;
+  }
+
+  function addDisjunction(constraints) {
+    addCons("disjunction( " + constraints.join(", ") + " )", "disjunction");
+  }
+
   // Variable mod value
   function mod(a, b) {
     const q = addVar();
@@ -92,13 +100,33 @@ function buildCip(
     addCons(`<${bigValue}>[I] -<${smallValue}>[I] >= 1`);
     // Everything being a multiple or factor of everything else is preferable,
     // but not required
-    // TODO: Figure out how to do soft constraints
-    if (i < orderedColors.length - 2) {
-      addCons(`<${mod(bigValue, smallValue)}>[I] == 0`);
-    }
+    let m = mod(bigValue, smallValue);
+    let score = addVar(undefined, 1);
+    addDisjunction([
+      "[conjunction] <>: conjunction( " +
+        [
+          `<${m}>[I] == 0`,
+          `<${score}>[I] == ${Math.floor(chips.reduce((total, [_, v]) => total + v, 0) / 10)}`,
+        ]
+          .map(anonLinear)
+          .join(", ") +
+        " )",
+      "[conjunction] <>: conjunction( " +
+        [`<${m}>[I] >= 1`, `<${score}>[I] == 0`].map(anonLinear).join(", ") +
+        " )",
+    ]);
     // Increments of round numbers are generally better
     if (preferredMultiple) {
-      addCons(`<${mod(bigValue, preferredMultiple)}>[I] == 0`);
+      m = mod(bigValue, preferredMultiple);
+      score = addVar(undefined, 1);
+      addDisjunction([
+        "[conjunction] <>: conjunction( " +
+          [`<${m}>[I] == 0`, `<${score}>[I] == 1`].map(anonLinear).join(", ") +
+          " )",
+        "[conjunction] <>: conjunction( " +
+          [`<${m}>[I] >= 1`, `<${score}>[I] == 0`].map(anonLinear).join(", ") +
+          " )",
+      ]);
     }
   });
 
@@ -114,23 +142,17 @@ function buildCip(
   }
   // We should be able to create the big blind from (at most) a couple of one of
   // the types of chips
-  function anonLinear(s) {
-    return `[linear] <>: ${s}`;
-  }
-  addCons(
-    "disjunction( " +
-      Object.entries(values)
-        .map(([_, { value }]) => {
-          return [
-            anonLinear(`<${value}>[I] == ${blinds.big}`),
-            anonLinear(`<${value}>[I] * 2 == ${blinds.big}`),
-            anonLinear(`<${value}>[I] * 3 == ${blinds.big}`),
-          ];
-        })
-        .flat()
-        .join(", ") +
-      " )",
-    "disjunction",
+  addDisjunction(
+    Object.entries(values)
+      .map(([_, { value }]) => {
+        return [
+          `<${value}>[I] == ${blinds.big}`,
+          `<${value}>[I] * 2 == ${blinds.big}`,
+          `<${value}>[I] * 3 == ${blinds.big}`,
+        ];
+      })
+      .flat()
+      .map(anonLinear),
   );
 
   // The chips given to each person must sum to the buy in
@@ -169,12 +191,13 @@ export async function solve(chips, ...args) {
   const { FS, callMain: main } = Module;
   // Build a model file and write it to the virtual filesystem
   const cip = buildCip(chips, ...args);
+  // console.log(cip);
   FS.writeFile("model.cip", cip);
   // Run the solver on the model file, write solution to virtual filesystem
   main([
     "-q",
-    "-c",
-    "set limits time 600",
+    // "-c",
+    // "set limits time 600",
     "-c",
     "read model.cip",
     "-c",
@@ -187,6 +210,7 @@ export async function solve(chips, ...args) {
   // TODO: Handle impossible case
   // Read solution from virtual filesystem, remove file, return parsed result
   const rawSolution = new TextDecoder().decode(FS.readFile("solution.txt"));
+  // console.log(rawSolution);
   FS.unlink("solution.txt");
   const lines = rawSolution.split("\n").slice(2);
   const solution = Object.fromEntries(

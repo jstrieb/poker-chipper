@@ -159,7 +159,7 @@
     <p>Optimally compute poker chip values for a home game.</p>
     <br />
     <ul>
-      <li>Drag or tap numbers to change their value</li>
+      <li>Drag numbers to change their value</li>
       <li>Use the buttons to add or remove chip colors</li>
       <li>Tap any color to edit it</li>
       <li>Results are computed at the bottom</li>
