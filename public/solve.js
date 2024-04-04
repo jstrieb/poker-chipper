@@ -13,8 +13,7 @@ function buildCip(
   numPeople,
   chipsValueInterval,
   chipsMultiple,
-  _buyIn,
-  buyInMultiple,
+  buyIn,
   blinds,
   preferredMultiple,
 ) {
@@ -39,6 +38,14 @@ function buildCip(
     constraints.push(`  [${type}] <${name}>: ${text};`);
   }
 
+  function anonLinear(s) {
+    return `[linear] <>: ${s}`;
+  }
+
+  function addDisjunction(constraints) {
+    addCons("disjunction( " + constraints.join(", ") + " )", "disjunction");
+  }
+
   // Variable mod value
   function mod(a, b) {
     const q = addVar();
@@ -52,11 +59,6 @@ function buildCip(
     }
     return r;
   }
-
-  // TODO: Handle buy in ranges and buy in multiple
-  const buyIn = addVar("buy_in");
-  addCons(`<${buyIn}>[I] == ${_buyIn}`);
-  addCons(`<${mod(buyIn, buyInMultiple)}>[I] == 0`);
 
   // Make variables to solve for the amount and value of each color
   const values = Object.fromEntries(
@@ -87,7 +89,7 @@ function buildCip(
   // necessary for the solver, but makes a lot of the constraints a lot easier
   // to express.
   const orderedColors = chips
-    .slice()
+    .slice() // Necessary to avoid destructively mutating the array
     .sort(([c1, v1], [c2, v2]) => v1 - v2)
     .map(([c, _]) => c);
   orderedColors.slice(0, -1).forEach((bigColor, i) => {
@@ -98,33 +100,64 @@ function buildCip(
     addCons(`<${bigValue}>[I] -<${smallValue}>[I] >= 1`);
     // Everything being a multiple or factor of everything else is preferable,
     // but not required
-    // TODO: Figure out how to do soft constraints
-    if (i < orderedColors.length - 2) {
-      addCons(`<${mod(bigValue, smallValue)}>[I] == 0`);
-    }
+    let m = mod(bigValue, smallValue);
+    let score = addVar(undefined, 1);
+    addDisjunction([
+      "[conjunction] <>: conjunction( " +
+        [
+          `<${m}>[I] == 0`,
+          `<${score}>[I] == ${Math.floor(chips.reduce((total, [_, v]) => total + v, 0) / 10)}`,
+        ]
+          .map(anonLinear)
+          .join(", ") +
+        " )",
+      "[conjunction] <>: conjunction( " +
+        [`<${m}>[I] >= 1`, `<${score}>[I] == 0`].map(anonLinear).join(", ") +
+        " )",
+    ]);
     // Increments of round numbers are generally better
     if (preferredMultiple) {
-      addCons(`<${mod(bigValue, preferredMultiple)}>[I] == 0`);
+      m = mod(bigValue, preferredMultiple);
+      score = addVar(undefined, 1);
+      addDisjunction([
+        "[conjunction] <>: conjunction( " +
+          [`<${m}>[I] == 0`, `<${score}>[I] == 1`].map(anonLinear).join(", ") +
+          " )",
+        "[conjunction] <>: conjunction( " +
+          [`<${m}>[I] >= 1`, `<${score}>[I] == 0`].map(anonLinear).join(", ") +
+          " )",
+      ]);
     }
   });
 
   // The max value chip should never be more than ~20% of the total buy-in
-  addCons(`<${values[orderedColors[0]].value}>[I] <= ${_buyIn / 5}`);
+  addCons(`<${values[orderedColors[0]].value}>[I] <= ${buyIn / 5}`);
 
   if (blinds) {
-    const { small, big } = blinds;
+    const { small } = blinds;
     // The smallest valued chip should be equal to the small blind
     addCons(
       `<${values[orderedColors[orderedColors.length - 1]].value}>[I] == ${small}`,
     );
-    // We should be able to create the big blind from (at most) a couple of one
-    // of the types of chips
-    // TODO: Disjunction
   }
+  // We should be able to create the big blind from (at most) a couple of one of
+  // the types of chips
+  addDisjunction(
+    Object.entries(values)
+      .map(([_, { value }]) => {
+        return [
+          `<${value}>[I] == ${blinds.big}`,
+          `<${value}>[I] * 2 == ${blinds.big}`,
+          `<${value}>[I] * 3 == ${blinds.big}`,
+        ];
+      })
+      .flat()
+      .map(anonLinear),
+  );
 
   // The chips given to each person must sum to the buy in
   addCons(
-    `<${buyIn}>-${Object.values(values)
+    `${buyIn}-${Object.values(values)
       .map(({ amount, value }) => `<${amount}>*<${value}>`)
       .join("-")} == 0`,
     "nonlinear",
@@ -158,12 +191,13 @@ async function solve(chips, ...args) {
   const { FS, callMain: main } = Module;
   // Build a model file and write it to the virtual filesystem
   const cip = buildCip(chips, ...args);
+  // console.log(cip);
   FS.writeFile("model.cip", cip);
   // Run the solver on the model file, write solution to virtual filesystem
   main([
     "-q",
-    "-c",
-    "set limits time 600",
+    // "-c",
+    // "set limits time 600",
     "-c",
     "read model.cip",
     "-c",
@@ -176,6 +210,7 @@ async function solve(chips, ...args) {
   // TODO: Handle impossible case
   // Read solution from virtual filesystem, remove file, return parsed result
   const rawSolution = new TextDecoder().decode(FS.readFile("solution.txt"));
+  // console.log(rawSolution);
   FS.unlink("solution.txt");
   const lines = rawSolution.split("\n").slice(2);
   const solution = Object.fromEntries(

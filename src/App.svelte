@@ -20,8 +20,10 @@
     border: 1px solid var(--main-fg-color);
     border-radius: 50%;
     position: relative;
-    bottom: -0.1em;
+    bottom: 0.4em;
     box-shadow: 2px 2px 0 0 var(--main-fg-color);
+    cursor: pointer;
+    margin-right: 0.5ch;
   }
 
   .underline {
@@ -122,10 +124,9 @@
     chipsValuemultiple = 5,
     chipsMultiple = 1,
     buyIn = 1000,
-    buyInMultiple = 1,
     blinds = {
       small: 10,
-      big: 20,
+      big: 25,
     },
     preferredMultiple = 25;
   let solution = "Loading...";
@@ -144,7 +145,6 @@
     chipsValuemultiple,
     chipsMultiple,
     buyIn,
-    buyInMultiple,
     blinds,
     preferredMultiple,
   ]);
@@ -160,7 +160,7 @@
     <p>Optimally compute poker chip values for a home game.</p>
     <br />
     <ul>
-      <li>Drag or tap numbers to change their value</li>
+      <li>Drag numbers to change their value</li>
       <li>Use the buttons to add or remove chip colors</li>
       <li>Tap any color to edit it</li>
       <li>Results are computed at the bottom</li>
@@ -267,9 +267,11 @@
           {#each Object.entries(solution) as [color, { amount, value }]}
             <tr>
               <td>
-                <span class="chip" style:--color="{color.toLocaleLowerCase()}"
-                ></span>
-                <span
+                <button
+                  class="chip"
+                  style:--color="{color.toLocaleLowerCase()}"
+                  on:click="{(e) => e.target.nextElementSibling.focus()}"
+                ></button><span
                   contenteditable="true"
                   on:focus="{select}"
                   on:input="{(e) => {
