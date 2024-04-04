@@ -103,6 +103,7 @@
 <script>
   import Button from "./Button.svelte";
   import NumericInput from "./NumericInput.svelte";
+  import SolveWorker from "./solveWorker.js?worker";
 
   import { debounce, dollars } from "./helpers.js";
   import { reloadModule, solve } from "./solve.js";
@@ -131,12 +132,26 @@
     },
     preferredMultiple = 25;
 
+  const worker = new SolveWorker();
   let solutionPromise = new Promise((r) => r());
   const debouncedSolve = debounce((...args) => {
-    solutionPromise = solve(...args).catch((e) => {
-      console.error(e);
-      reloadModule();
-    });
+    solutionPromise = solutionPromise.then(
+      () =>
+        new Promise((resolve, reject) => {
+          // TODO: Handle out of order results from concurrently queued solves
+          worker.onmessage = (e) => {
+            const { data } = e;
+            if (data.error) {
+              console.error(data.error);
+              // reject(data.error);
+              resolve(undefined);
+            } else {
+              resolve(data.data);
+            }
+          };
+          worker.postMessage(args);
+        }),
+    );
   }, 200);
   $: debouncedSolve(
     chips,
