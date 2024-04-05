@@ -16,11 +16,9 @@
     background: var(--color);
     width: 1em;
     height: 1em;
-    display: inline-block;
+    display: inline-flex;
     border: 1px solid var(--main-fg-color);
     border-radius: 50%;
-    position: relative;
-    bottom: 0.4em;
     box-shadow: 2px 2px 0 0 var(--main-fg-color);
     cursor: pointer;
     margin-right: 0.5ch;
@@ -46,7 +44,12 @@
   .table-container {
     width: 100%;
     max-width: 100%;
+    min-height: 8em;
     overflow: auto;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
   }
 
   table {
@@ -106,7 +109,6 @@
   import SolveWorker from "./solveWorker.js?worker";
 
   import { debounce, dollars } from "./helpers.js";
-  import { reloadModule, solve } from "./solve.js";
 
   const colors = [
     "white",
