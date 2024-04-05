@@ -16,6 +16,7 @@
 
   .input {
     user-select: none;
+    -webkit-user-select: none;
     cursor: col-resize;
     flex-grow: 1;
     flex-shrink: 1;
@@ -28,6 +29,7 @@
     text-align: center;
     border: 2px solid var(--main-fg-color);
     box-shadow: 3px 3px 0 0 var(--main-fg-color);
+    /* touch-action: pinch-zoom; */
   }
 </style>
 
@@ -104,8 +106,8 @@
     on:pointerup="{pointerup}"
   >
     <span
-      style:transform="translateX(calc({$deltaX} * ({boxWidth / 2}px - 4ch)))"
-      >{display(value)}</span
+      style:transform="translate3d(calc({$deltaX} * ({boxWidth / 2}px - 4ch)),
+      0, 0)">{display(value)}</span
     >
   </div>
 </div>

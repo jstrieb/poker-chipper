@@ -4,6 +4,8 @@
     padding: 0.5em 0.25em;
     border: 2px solid var(--main-fg-color);
     box-shadow: 3px 3px 0 0 var(--main-fg-color);
+    user-select: none;
+    -webkit-user-select: none;
   }
 
   button:hover {
