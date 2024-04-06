@@ -29,7 +29,6 @@
     text-align: center;
     border: 2px solid var(--main-fg-color);
     box-shadow: 3px 3px 0 0 var(--main-fg-color);
-    /* touch-action: pinch-zoom; */
   }
 </style>
 
@@ -45,7 +44,7 @@
   let initialValue = value;
   let numInput,
     queued = 0,
-    pointerStart = 0,
+    pointerStart = { x: 0, y: 0 },
     deltaX = spring(0, { stiffness: 0.15, damping: 0.3 });
   let boxWidth;
   $: transform = compose(
@@ -61,39 +60,60 @@
     return x / (1 + Math.abs(x));
   }
 
+  let moveCount = 0,
+    isScrolling = false;
+
   function pointerdown(e) {
     numInput.addEventListener("pointermove", pointermove);
     numInput.setPointerCapture(e.pointerId);
     const { left, right } = e.target.getBoundingClientRect();
     boxWidth = right - left;
-    pointerStart = e.clientX;
+    pointerStart = { x: e.clientX, y: e.clientY };
   }
 
   function pointerup(e) {
     numInput.removeEventListener("pointermove", pointermove);
     numInput.releasePointerCapture(e.pointerId);
+    moveCount = 0;
     queued = 0;
-    pointerStart = 0;
+    pointerStart = { x: 0, y: 0 };
     deltaX.set(0);
     initialValue = value;
   }
 
   function pointermove(e) {
+    isScrolling =
+      moveCount++ < 5 &&
+      // Heuristic for "are we scrolling, or are we dragging"
+      Math.abs(pointerStart.y - e.clientY) >
+        1.5 * Math.abs(pointerStart.x - e.clientX);
+    if (isScrolling) {
+      return;
+    }
     const { left, right } = e.target.getBoundingClientRect();
     boxWidth = right - left;
-    const sign = -1 * Math.sign(e.clientX - pointerStart);
+    const sign = -1 * Math.sign(e.clientX - pointerStart.x);
     deltaX.set(
       sign *
         Math.min(
-          Math.abs(sigmoid((e.clientX - pointerStart) / 10)),
-          Math.abs((e.clientX - pointerStart) / (boxWidth / 2)),
+          Math.abs(sigmoid((e.clientX - pointerStart.x) / 10)),
+          Math.abs((e.clientX - pointerStart.x) / (boxWidth / 2)),
         ),
       {
         hard: true,
       },
     );
-    queued = transform(e.clientX - pointerStart);
+    queued = transform(e.clientX - pointerStart.x);
     value = minmax(initialValue + queued);
+  }
+
+  // Prevent default in the touch event will block or allow scrolling based on a
+  // heuristic - the built-in one for iOS causes janky interaction
+  function touchmove(e) {
+    if (!isScrolling) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
   }
 </script>
 
@@ -104,6 +124,7 @@
     bind:this="{numInput}"
     on:pointerdown="{pointerdown}"
     on:pointerup="{pointerup}"
+    on:touchmove|capture|nonpassive="{touchmove}"
   >
     <span
       style:transform="translate3d(calc({$deltaX} * ({boxWidth / 2}px - 4ch)),
