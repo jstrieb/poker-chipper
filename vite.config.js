@@ -13,4 +13,12 @@ export default defineConfig({
       },
     },
   },
+  server: {
+    headers: {
+      // Necessary for testing service workers locally in Firefox and Chrome.
+      // For more info, see:
+      // https://bugzilla.mozilla.org/show_bug.cgi?id=1429714
+      "service-worker-allowed": "/",
+    },
+  },
 });

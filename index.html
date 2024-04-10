@@ -7,6 +7,20 @@
   <head>
     <meta charset="UTF-8" />
 
+    <script type="module">
+      import serviceWorkerUrl from "./src/serviceWorker.js?url";
+
+      if ("serviceWorker" in navigator) {
+        if (navigator.serviceWorker.controller) {
+          navigator.serviceWorker
+            .register(serviceWorkerUrl, { scope: "./" })
+            .catch(console.error);
+        } else {
+          window.location.reload();
+        }
+      }
+    </script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- TODO: title and description -->
     <meta name="description" content="Poker Chipper" />
