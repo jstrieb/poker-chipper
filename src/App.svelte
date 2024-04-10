@@ -46,14 +46,11 @@
     max-width: 100%;
     min-height: 8em;
     overflow: auto;
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: center;
-    align-items: center;
+    display: block;
   }
 
   table {
-    width: fit-content;
+    width: max-content;
     margin: auto;
     border-collapse: collapse;
   }
@@ -66,12 +63,15 @@
   }
 
   td:first-of-type {
-    padding-left: 0;
     text-align: left;
   }
 
+  td:nth-last-of-type(2) {
+    padding-right: 1ch;
+  }
+
   td:last-of-type {
-    padding-right: 0;
+    padding: 0.25em 0;
   }
 
   hr {
@@ -130,7 +130,7 @@
     buyIn = 1000,
     blinds = {
       small: 10,
-      big: 25,
+      big: 20,
     },
     preferredMultiple = 25;
 
@@ -311,12 +311,16 @@
               <td>&times;</td>
               <td><b>{dollars(value)}</b> each</td>
               <td>=</td>
-              <td><b>{dollars(amount * value)}</b> total</td>
+              <td><b>{dollars(amount * value)}</b></td><td>total</td>
             </tr>
           {/each}
           {#if solution}
-            <tr><td colspan="6"><hr /></td></tr>
-            <tr><td colspan="5"></td><td><b>{dollars(buyIn)}</b> total</td></tr>
+            <tr><td colspan="7"><hr /></td></tr>
+            <tr>
+              <td colspan="5"></td>
+              <td><b>{dollars(buyIn)}</b></td>
+              <td>total</td>
+            </tr>
           {:else}
             <div>No valid solution found!</div>
           {/if}
