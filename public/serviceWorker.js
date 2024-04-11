@@ -11,7 +11,6 @@ self.addEventListener("fetch", (e) => {
     (async () => {
       const { request } = e;
       let response = await caches.match(request);
-      response = await fetch(request);
       if (response) {
         return response;
       }

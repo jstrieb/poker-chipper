@@ -8,15 +8,26 @@
     <meta charset="UTF-8" />
 
     <script type="module">
-      import serviceWorkerUrl from "./src/serviceWorker.js?url";
-
       if ("serviceWorker" in navigator) {
-        if (navigator.serviceWorker.controller) {
-          navigator.serviceWorker
-            .register(serviceWorkerUrl, { scope: "./" })
-            .catch(console.error);
+        navigator.serviceWorker
+          // Must be a path like this so that it works when the file is copied
+          // from the public directory to the top level on build. If a proper
+          // Vite URL import is used, the file will either be inlined (can be
+          // fixed by `build: { assetsInlineLimit: 0, }` in the Vite config), or
+          // it will be put in the assets directory. If it is in the assets
+          // directory, but the scope includes things outside the assets
+          // directory, the browser deems it "insecure" and will not allow the
+          // service worker to be created.
+          .register("./serviceWorker.js", { scope: "./" })
+          .catch(console.error);
+        let reloadCount = JSON.parse(localStorage.getItem("reloadCount") ?? 0);
+        if (!navigator.serviceWorker.controller) {
+          if (reloadCount < 2) {
+            localStorage.setItem("reloadCount", `${++reloadCount}`);
+            window.location.reload();
+          }
         } else {
-          window.location.reload();
+          localStorage.setItem("reloadCount", "0");
         }
       }
     </script>
