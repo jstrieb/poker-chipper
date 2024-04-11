@@ -134,22 +134,36 @@
     },
     preferredMultiple = 25;
 
-  const worker = new SolveWorker();
+  let worker = new SolveWorker();
+  let promiseResolved = true,
+    resolvePromise = () => {};
   let solutionPromise = new Promise((r) => r());
   const debouncedSolve = debounce((...args) => {
+    if (!promiseResolved) {
+      worker.terminate();
+      resolvePromise();
+      worker = new SolveWorker();
+    }
+    promiseResolved = false;
     solutionPromise = solutionPromise.then(
       () =>
         new Promise((resolve, reject) => {
           // TODO: Handle out of order results from concurrently queued solves
+          resolvePromise = resolve;
           worker.onmessage = (e) => {
             const { data } = e;
             if (data.error) {
               console.error(data.error);
               // reject(data.error);
+              promiseResolved = true;
               resolve(undefined);
             } else {
+              promiseResolved = true;
               resolve(data.data);
             }
+          };
+          worker.onerror = (e) => {
+            console.error(e);
           };
           worker.postMessage(args);
         }),
