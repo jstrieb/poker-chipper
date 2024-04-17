@@ -51,9 +51,10 @@
 
   summary {
     cursor: pointer;
+    user-select: none;
   }
 
-  details[open] > summary {
+  details[open] summary {
     margin-bottom: 1em;
   }
 
@@ -148,7 +149,8 @@
       small: 10,
       big: 20,
     },
-    preferredMultiple = 25;
+    preferredMultiple = 25,
+    preferredMultipleWeight = 1;
 
   let worker = new SolveWorker();
   let promiseResolved = true,
@@ -193,6 +195,7 @@
     buyIn,
     blinds,
     preferredMultiple,
+    preferredMultipleWeight,
   );
 
   function select(e) {
@@ -312,6 +315,14 @@
           initialScale: 3,
         }}"
         min="1">Preferred Value Multiple</NumericInput
+      >
+      <NumericInput
+        bind:value="{preferredMultipleWeight}"
+        transforms="{{
+          round: [{ limit: 10, multiple: 1 }, { multiple: 5 }],
+          initialScale: 10,
+        }}"
+        min="0">Value Multiple Preference Weight</NumericInput
       >
       <NumericInput
         bind:value="{chipsMultiple}"

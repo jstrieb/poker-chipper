@@ -16,6 +16,7 @@ function buildCip(
   buyIn,
   blinds,
   preferredMultiple,
+  preferredMultipleWeight,
 ) {
   const variables = [],
     constraints = [];
@@ -121,7 +122,9 @@ function buildCip(
       score = addVar(undefined, 1);
       addDisjunction([
         "[conjunction] <>: conjunction( " +
-          [`<${m}>[I] == 0`, `<${score}>[I] == 1`].map(anonLinear).join(", ") +
+          [`<${m}>[I] == 0`, `<${score}>[I] == ${preferredMultipleWeight}`]
+            .map(anonLinear)
+            .join(", ") +
           " )",
         "[conjunction] <>: conjunction( " +
           [`<${m}>[I] >= 1`, `<${score}>[I] == 0`].map(anonLinear).join(", ") +
