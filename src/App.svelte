@@ -41,6 +41,22 @@
     gap: 1ch;
   }
 
+  details > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 1em;
+  }
+
+  summary {
+    cursor: pointer;
+  }
+
+  details[open] > summary {
+    margin-bottom: 1em;
+  }
+
   .table-container {
     width: 100%;
     max-width: 100%;
@@ -285,6 +301,28 @@
       }}">Remove Color</Button
     >
   </div>
+  <details>
+    <summary>Advanced Options</summary>
+    <div>
+      <NumericInput
+        bind:value="{preferredMultiple}"
+        display="{dollars}"
+        transforms="{{
+          round: [{ limit: 10, multiple: 1 }, { multiple: 25 }],
+          initialScale: 3,
+        }}"
+        min="1">Preferred Value Multiple</NumericInput
+      >
+      <NumericInput
+        bind:value="{chipsMultiple}"
+        transforms="{{
+          round: [{ limit: 10, multiple: 1 }, { multiple: 5 }],
+          initialScale: 10,
+        }}"
+        min="1">Quantity Multiple</NumericInput
+      >
+    </div>
+  </details>
 
   <h1 style:margin-top="calc(1em + 3px)">Results</h1>
 
