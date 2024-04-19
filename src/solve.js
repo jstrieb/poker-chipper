@@ -8,7 +8,7 @@ export function reloadModule() {
 }
 reloadModule();
 
-function buildCip(
+export function buildCip(
   chips,
   numPeople,
   chipsValueInterval,
@@ -169,7 +169,7 @@ function buildCip(
   return `STATISTICS
   Problem name: main
   Variables: ${variables.length} (0 binary, ${variables.length} integer, 0 implicit integer, 0 continuous)
-  Constrainst: 0 initial, ${constraints.length} maximal
+  Constraints: 0 initial, ${constraints.length} maximal
 OBJECTIVE
   Sense: maximize
 VARIABLES

@@ -58,6 +58,13 @@
     margin-bottom: 1em;
   }
 
+  pre {
+    overflow-x: auto;
+    font-family: monospace, monospace;
+    height: max-content;
+    max-height: 20em;
+  }
+
   .table-container {
     width: 100%;
     max-width: 100%;
@@ -125,6 +132,7 @@
   import NumericInput from "./NumericInput.svelte";
   import SolveWorker from "./solveWorker.js?worker";
 
+  import { buildCip } from "./solve.js";
   import { debounce, dollars } from "./helpers.js";
 
   const colors = [
@@ -188,6 +196,16 @@
     );
   }, 200);
   $: debouncedSolve(
+    chips,
+    numPeople,
+    chipsValueMultiple,
+    chipsMultiple,
+    buyIn,
+    blinds,
+    preferredMultiple,
+    preferredMultipleWeight,
+  );
+  $: model = buildCip(
     chips,
     numPeople,
     chipsValueMultiple,
@@ -341,6 +359,33 @@
         }}"
         min="1">Quantity Multiple</NumericInput
       >
+      <details>
+        <summary>Raw Optimizer Model</summary>
+        <div>
+          <p>Run the model with <a href="https://www.scipopt.org/">SCIP</a>.</p>
+          <pre>{model}</pre>
+          <div class="buttons">
+            <Button
+              style="flex-grow: 1; width: 50%;"
+              on:click="{async () => {
+                await navigator.clipboard?.writeText(model);
+              }}">Copy Model</Button
+            >
+            <Button
+              style="flex-grow: 1; width: 50%;"
+              on:click="{() => {
+                Object.assign(document.createElement('a'), {
+                  href: URL.createObjectURL(
+                    new Blob([model], { type: 'text/plain' }),
+                  ),
+                  download: 'poker_model.cip',
+                  target: '_blank',
+                }).click();
+              }}">Download Model</Button
+            >
+          </div>
+        </div>
+      </details>
     </div>
   </details>
 
