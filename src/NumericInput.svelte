@@ -77,13 +77,10 @@
   async function pointerup(e) {
     numInput.removeEventListener("pointermove", pointermove);
     numInput.releasePointerCapture(e.pointerId);
-    // Handle regular click
-    if (
-      moveCount < 5 &&
-      Math.abs(pointerStart.y - e.clientY) +
-        Math.abs(pointerStart.x - e.clientX) <
-        5
-    ) {
+    const dx = Math.abs(pointerStart.x - e.clientX);
+    const dy = Math.abs(pointerStart.y - e.clientY);
+    if (moveCount < 20 && dy + dx < 10) {
+      // Handle regular click
       e.preventDefault();
       editing = true;
       await tick();
@@ -99,11 +96,12 @@
   }
 
   function pointermove(e) {
+    const dx = Math.abs(pointerStart.x - e.clientX);
+    const dy = Math.abs(pointerStart.y - e.clientY);
     isScrolling =
-      moveCount++ < 5 &&
+      moveCount++ < 10 &&
       // Heuristic for "are we scrolling, or are we dragging"
-      Math.abs(pointerStart.y - e.clientY) >
-        1.5 * Math.abs(pointerStart.x - e.clientX);
+      (dy + dx < 10 || dy > 1.5 * dx);
     if (isScrolling) {
       return;
     }
