@@ -10,14 +10,17 @@ self.addEventListener("fetch", (e) => {
   e.respondWith(
     (async () => {
       const { request } = e;
-      let response = await caches.match(request);
-      if (response) {
+      let cached = await caches.match(request);
+      if (cached && new URL(request.url).pathname.match(/\/scip\./)) {
+        return cached;
+      }
+      let response = await fetch(request).catch(() => ({ ok: false }));
+      if (response.ok) {
+        const cache = await caches.open("cache");
+        await cache.put(request, response.clone()).catch(() => {});
         return response;
       }
-      response = await fetch(request);
-      const cache = await caches.open("cache");
-      await cache.put(request, response.clone());
-      return response;
+      return cached;
     })(),
   );
 });
