@@ -142,7 +142,7 @@
 
   let numPeople = 7,
     chips = colors.slice(0, nextColor).map((c) => [c, 50]),
-    chipsValuemultiple = 5,
+    chipsValueMultiple = 5,
     chipsMultiple = 1,
     buyIn = 1000,
     blinds = {
@@ -190,7 +190,7 @@
   $: debouncedSolve(
     chips,
     numPeople,
-    chipsValuemultiple,
+    chipsValueMultiple,
     chipsMultiple,
     buyIn,
     blinds,
@@ -323,6 +323,15 @@
           initialScale: 10,
         }}"
         min="0">Value Multiple Preference Weight</NumericInput
+      >
+      <NumericInput
+        bind:value="{chipsValueMultiple}"
+        display="{dollars}"
+        transforms="{{
+          round: [{ limit: 5, multiple: 1 }, { multiple: 5 }],
+          initialScale: 3,
+        }}"
+        min="1">Required Value Multiple</NumericInput
       >
       <NumericInput
         bind:value="{chipsMultiple}"
