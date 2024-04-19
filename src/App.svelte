@@ -223,7 +223,7 @@
     <p>Optimally compute poker chip values for a home game.</p>
     <br />
     <ul>
-      <li>Drag numbers to change their value</li>
+      <li>Drag or tap numbers to change their value</li>
       <li>Use the buttons to add or remove chip colors</li>
       <li>Tap any color to edit it</li>
       <li>Results are computed at the bottom</li>
@@ -293,7 +293,9 @@
           if (text !== e.target.innerText) {
             // TODO: Fix cursor reset
             color = text;
-            e.target.blur();
+            if (text) {
+              e.target.blur();
+            }
           }
         }}"
       ></span> Chips</NumericInput
@@ -413,7 +415,9 @@
                     if (text !== e.target.innerText) {
                       // TODO: Fix cursor reset
                       e.target.textContent = text;
-                      e.target.blur();
+                      if (text) {
+                        e.target.blur();
+                      }
                     }
                   }}"
                   on:blur="{(e) => {
