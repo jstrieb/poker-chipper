@@ -34,13 +34,16 @@
 
 <script>
   import { spring } from "svelte/motion";
-  import { compose, roundToNearest, scale } from "./helpers";
+  import { compose, roundToNearest, scale, select } from "./helpers.js";
+  import { tick } from "svelte";
 
   export let value,
     transforms = {},
-    display = (x) => x,
+    display,
     min = -Infinity,
     max = Infinity;
+  let editing = false,
+    editable;
   let initialValue = value;
   let numInput,
     queued = 0,
@@ -71,9 +74,21 @@
     pointerStart = { x: e.clientX, y: e.clientY };
   }
 
-  function pointerup(e) {
+  async function pointerup(e) {
     numInput.removeEventListener("pointermove", pointermove);
     numInput.releasePointerCapture(e.pointerId);
+    // Handle regular click
+    if (
+      moveCount < 5 &&
+      Math.abs(pointerStart.y - e.clientY) +
+        Math.abs(pointerStart.x - e.clientX) <
+        5
+    ) {
+      editing = true;
+      await tick();
+      editable.focus();
+      select(editable);
+    }
     moveCount = 0;
     queued = 0;
     pointerStart = { x: 0, y: 0 };
@@ -119,16 +134,46 @@
 
 <div>
   <span class="label"><slot /></span>
-  <div
-    class="input"
-    bind:this="{numInput}"
-    on:pointerdown="{pointerdown}"
-    on:pointerup="{pointerup}"
-    on:touchmove|capture|nonpassive="{touchmove}"
-  >
-    <span
-      style:transform="translate3d(calc({$deltaX} * ({boxWidth / 2}px - 4ch)),
-      0, 0)">{display(value)}</span
+  {#if !editing}
+    <div
+      class="input"
+      bind:this="{numInput}"
+      on:pointerdown="{pointerdown}"
+      on:pointerup="{pointerup}"
+      on:touchmove|capture|nonpassive="{touchmove}"
     >
-  </div>
+      <span
+        style:transform="translate3d(calc({$deltaX} * ({boxWidth / 2}px - 4ch)),
+        0, 0)">{(display ?? ((x) => x))(value)}</span
+      >
+    </div>
+  {:else}
+    <div class="input">
+      <span
+        bind:this="{editable}"
+        on:blur="{() => {
+          editing = false;
+          moveCount = 0;
+          queued = 0;
+          pointerStart = { x: 0, y: 0 };
+          deltaX.set(0);
+          initialValue = parseInt(value);
+        }}"
+        contenteditable
+        bind:innerText="{value}"
+        on:input="{(e) => {
+          // Must use innerText over textContent to handle newlines
+          const text = e.target.innerText.replaceAll(/[^0-9]+/gm, '');
+          if (text !== e.target.innerText) {
+            // TODO: Fix cursor reset
+            value = text;
+            e.target.blur();
+          }
+        }}"
+      ></span>
+      {#if display}
+        <span>{display(value)}</span>
+      {/if}
+    </div>
+  {/if}
 </div>

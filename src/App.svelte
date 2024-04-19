@@ -133,7 +133,7 @@
   import SolveWorker from "./solveWorker.js?worker";
 
   import { buildCip } from "./solve.js";
-  import { debounce, dollars } from "./helpers.js";
+  import { debounce, dollars, select } from "./helpers.js";
 
   const colors = [
     "white",
@@ -215,10 +215,6 @@
     preferredMultiple,
     preferredMultipleWeight,
   );
-
-  function select(e) {
-    window.getSelection().selectAllChildren(e.target);
-  }
 </script>
 
 <div class="main">
@@ -292,8 +288,9 @@
         bind:textContent="{color}"
         on:focus="{select}"
         on:input="{(e) => {
-          const text = e.target.textContent.replaceAll(/[^a-zA-Z]+/g, '');
-          if (text !== e.target.textContent) {
+          // Must use innerText over textContent to handle newlines
+          const text = e.target.innerText.replaceAll(/[^a-zA-Z]+/gm, '');
+          if (text !== e.target.innerText) {
             // TODO: Fix cursor reset
             color = text;
             e.target.blur();
@@ -408,11 +405,12 @@
                   contenteditable="true"
                   on:focus="{select}"
                   on:input="{(e) => {
-                    const text = e.target.textContent.replaceAll(
-                      /[^a-zA-Z]+/g,
+                    // Must use innerText over textContent to handle newlines
+                    const text = e.target.innerText.replaceAll(
+                      /[^a-zA-Z]+/gm,
                       '',
                     );
-                    if (text !== e.target.textContent) {
+                    if (text !== e.target.innerText) {
                       // TODO: Fix cursor reset
                       e.target.textContent = text;
                       e.target.blur();

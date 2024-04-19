@@ -70,3 +70,7 @@ export function debounce(f, delay) {
     t = setTimeout(() => f(...args), delay);
   };
 }
+
+export function select(e) {
+  window.getSelection().selectAllChildren(e.target ?? e);
+}
