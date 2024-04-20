@@ -1,0 +1,49 @@
+{
+  "name": "Poker Chipper",
+  "start_url": "./",
+  "display": "standalone",
+  "icons": [
+    {
+      "src": "favicon-32.png",
+      "type": "image/png",
+      "purpose": "any",
+      "sizes": "32x32"
+    },
+    {
+      "src": "favicon-128.png",
+      "type": "image/png",
+      "purpose": "any",
+      "sizes": "128x128"
+    },
+    {
+      "src": "favicon-512.png",
+      "type": "image/png",
+      "purpose": "any",
+      "sizes": "512x512"
+    },
+    {
+      "src": "favicon.svg",
+      "type": "image/svg+xml",
+      "purpose": "any",
+      "sizes": "any"
+    }
+  ],
+  "background_color": "#fff",
+  "categories": [],
+  "description": "Optimally allocate poker chips using constrained, nonlinear optimization",
+  "file_handlers": [],
+  "launch_handler": {
+    "client_mode": [
+      "navigate-existing",
+      "focus-existing",
+      "navigate-new",
+      "auto"
+    ]
+  },
+  "orientation": "any",
+  "protocol_handlers": [],
+  "related_applications": [],
+  "scope": "./",
+  "short_name": "Poker Chipper",
+  "theme_color": "#000"
+}
