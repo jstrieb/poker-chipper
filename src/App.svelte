@@ -103,12 +103,26 @@
     border-top: 1.5px solid var(--main-fg-color);
   }
 
-  h1 {
-    margin: 1em 0;
+  h1 img {
+    max-width: 8ch;
   }
 
-  h1:first-child {
-    margin-top: 0;
+  h1 {
+    font-size: large;
+    display: block;
+    width: 100%;
+    max-width: 50ch;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 2ch;
+    margin-top: 2em;
+  }
+
+  h2 {
+    margin: 1em 0;
   }
 
   ul {
@@ -131,6 +145,7 @@
   import Button from "./Button.svelte";
   import NumericInput from "./NumericInput.svelte";
   import SolveWorker from "./solveWorker.js?worker";
+  import favicon from "/public/favicon-light.svg?image";
 
   import { buildCip } from "./solve.js";
   import { debounce, dollars, select } from "./helpers.js";
@@ -217,8 +232,9 @@
   );
 </script>
 
+<h1><img src="{favicon}" alt="Poker Chipper logo" />Poker Chipper</h1>
 <div class="main">
-  <h1>Instructions</h1>
+  <h2>Instructions</h2>
   <div class="instructions">
     <p>Optimally compute poker chip values for a home game.</p>
     <br />
@@ -229,7 +245,7 @@
       <li>Results are computed at the bottom</li>
     </ul>
   </div>
-  <h1>Inputs</h1>
+  <h2>Inputs</h2>
   <NumericInput
     bind:value="{numPeople}"
     min="1"
@@ -388,7 +404,7 @@
     </div>
   </details>
 
-  <h1 style:margin-top="calc(1em + 3px)">Results</h1>
+  <h2 style:margin-top="calc(1em + 3px)">Results</h2>
 
   <div class="table-container">
     <table>
