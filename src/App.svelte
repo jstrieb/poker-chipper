@@ -3,7 +3,7 @@
   footer {
     max-width: 50ch;
     width: 100%;
-    margin: 2em 0;
+    margin: 1em 0;
     padding: 0 0.5em;
     display: flex;
     flex-direction: column;
@@ -47,28 +47,56 @@
     justify-content: flex-start;
     align-items: stretch;
     gap: 1em;
+    padding-left: 1em;
+    border-left: 2px dashed black;
   }
 
   summary {
     cursor: pointer;
+    -webkit-user-select: none;
     user-select: none;
+    list-style: none;
+    margin-left: calc(-0.5ch + 2px);
   }
 
-  details[open] summary {
-    margin-bottom: 1em;
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  /* 
+    Must use custom arrows to make them uniform width across browsers. This is
+    required to have the left border of expanded details elements be centered
+    with the tip of the arrow across browsers. 
+  */
+  details > summary::before {
+    content: "▸";
+    display: inline-block;
+    text-align: center;
+    padding-right: 0.75ch;
+    width: 1ch;
+    font-family: monospace, monospace;
+    transform: scale(1.5) translateY(-0.05em);
+  }
+
+  details[open] > summary::before {
+    content: "▾";
+  }
+
+  details[open] > summary {
+    margin-bottom: 0.5em;
   }
 
   pre {
     overflow-x: auto;
     font-family: monospace, monospace;
-    height: max-content;
-    max-height: 20em;
+    height: 20em;
+    resize: vertical;
   }
 
   .table-container {
     width: 100%;
     max-width: 100%;
-    min-height: 8em;
+    min-height: 10em;
     overflow: auto;
     display: block;
   }
@@ -103,22 +131,28 @@
     border-top: 1.5px solid var(--main-fg-color);
   }
 
-  h1 img {
-    max-width: 8ch;
-  }
-
-  h1 {
-    font-size: large;
-    display: block;
+  .title {
+    margin: 0;
     width: 100%;
     max-width: 50ch;
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: center;
     align-items: center;
     gap: 2ch;
     margin-top: 2em;
+  }
+
+  .title h1 {
+    flex-grow: 1;
+    text-align: center;
+    font-size: large;
+  }
+
+  .title img {
+    width: calc(24px + 10%);
+    max-width: 8ch;
   }
 
   h2 {
@@ -138,6 +172,7 @@
     flex-grow: 1;
     justify-content: flex-end;
     text-align: center;
+    margin: 2em 0;
   }
 </style>
 
@@ -145,7 +180,7 @@
   import Button from "./Button.svelte";
   import NumericInput from "./NumericInput.svelte";
   import SolveWorker from "./solveWorker.js?worker";
-  import favicon from "/public/favicon-light.svg?image";
+  import favicon from "/favicon-light.svg?url";
 
   import { buildCip } from "./solve.js";
   import { debounce, dollars, select } from "./helpers.js";
@@ -232,7 +267,11 @@
   );
 </script>
 
-<h1><img src="{favicon}" alt="Poker Chipper logo" />Poker Chipper</h1>
+<div class="title">
+  <img src="{favicon}" alt="Poker Chipper logo" />
+  <h1>Poker Chipper</h1>
+  <img src="{favicon}" alt="Poker Chipper logo" />
+</div>
 <div class="main">
   <h2>Instructions</h2>
   <div class="instructions">
