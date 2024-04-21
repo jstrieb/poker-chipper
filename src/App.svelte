@@ -272,6 +272,14 @@
   <h1>Poker Chipper</h1>
   <img src="{favicon}" alt="Poker Chipper logo" />
 </div>
+<p
+  style:color="red"
+  style:margin="2em 1em 0 1em"
+  style:font-weight="bold"
+  style:text-align="center"
+>
+  Warning: this code is actively under construction.
+</p>
 <div class="main">
   <h2>Instructions</h2>
   <div class="instructions">
