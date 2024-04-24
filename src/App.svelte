@@ -196,10 +196,10 @@
     "brown",
     "gray",
   ];
-  let nextColor = 4;
 
   let numPeople = 7,
-    chips = colors.slice(0, nextColor).map((c) => [c, 50]),
+    chipValues = new Array(4).fill(50),
+    chipColors = colors.slice(0, 4),
     chipsValueMultiple = 5,
     chipsMultiple = 1,
     buyIn = 1000,
@@ -246,7 +246,7 @@
     );
   }, 200);
   $: debouncedSolve(
-    chips,
+    chipValues,
     numPeople,
     chipsValueMultiple,
     chipsMultiple,
@@ -256,7 +256,7 @@
     preferredMultipleWeight,
   );
   $: model = buildCip(
-    chips,
+    chipValues,
     numPeople,
     chipsValueMultiple,
     chipsMultiple,
@@ -329,7 +329,7 @@
     }}"
     min="5">Small Blind</NumericInput
   >
-  {#each chips as [color, value]}
+  {#each chipValues as value, i}
     <NumericInput
       bind:value
       min="1"
@@ -345,17 +345,17 @@
       Total <span
         contenteditable="true"
         class:underline="{true}"
-        style:--color="{color.toLocaleLowerCase() !== "white"
-          ? color
+        style:--color="{chipColors[i].toLocaleLowerCase() !== "white"
+          ? chipColors[i]
           : "black"}"
-        bind:textContent="{color}"
+        bind:textContent="{chipColors[i]}"
         on:focus="{select}"
         on:input="{(e) => {
           // Must use innerText over textContent to handle newlines
           const text = e.target.innerText.replaceAll(/[^a-zA-Z]+/gm, '');
           if (text !== e.target.innerText) {
             // TODO: Fix cursor reset
-            color = text;
+            chipColors[i] = text;
             if (text) {
               e.target.blur();
             }
@@ -368,18 +368,21 @@
     <Button
       style="flex-grow: 1; width: 50%;"
       on:click="{() => {
-        const newColor = colors[nextColor++ % colors.length];
-        chips.push([newColor, chips[chips.length - 1][1]]);
-        chips = chips;
+        const newColor = colors[chipColors.length % colors.length];
+        chipColors.push(newColor);
+        chipValues.push(chipValues[chipValues.length - 1]);
+        chipColors = chipColors;
+        chipValues = chipValues;
       }}">Add Color</Button
     >
     <Button
       style="flex-grow: 1; width: 50%;"
       on:click="{() => {
-        if (chips.length > 1) {
-          nextColor--;
-          chips.pop();
-          chips = chips;
+        if (chipValues.length > 1) {
+          chipColors.pop();
+          chipValues.pop();
+          chipColors = chipColors;
+          chipValues = chipValues;
         }
       }}">Remove Color</Button
     >
@@ -459,12 +462,12 @@
         {#await solutionPromise}
           <div>Loading...</div>
         {:then solution}
-          {#each Object.entries(solution ?? {}) as [color, { amount, value }]}
+          {#each solution ?? [] as { amount, value }, i}
             <tr>
               <td>
                 <button
                   class="chip"
-                  style:--color="{color.toLocaleLowerCase()}"
+                  style:--color="{chipColors[i].toLocaleLowerCase()}"
                   on:click="{(e) => e.target.nextElementSibling.focus()}"
                 ></button><span
                   contenteditable="true"
@@ -485,8 +488,8 @@
                   }}"
                   on:blur="{(e) => {
                     const text = e.target.textContent;
-                    chips[chips.map(([c, _]) => c).indexOf(color)][0] = text;
-                  }}">{color}</span
+                    chipColors[i] = text;
+                  }}">{chipColors[i]}</span
                 >
               </td>
               <td><b>{amount}</b> chips</td>
