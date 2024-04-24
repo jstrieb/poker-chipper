@@ -41,51 +41,6 @@
     gap: 1ch;
   }
 
-  details > div {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: stretch;
-    gap: 1em;
-    padding-left: 1em;
-    border-left: 2px dashed black;
-  }
-
-  summary {
-    cursor: pointer;
-    -webkit-user-select: none;
-    user-select: none;
-    list-style: none;
-    margin-left: calc(-0.5ch + 2px);
-  }
-
-  summary::-webkit-details-marker {
-    display: none;
-  }
-
-  /* 
-    Must use custom arrows to make them uniform width across browsers. This is
-    required to have the left border of expanded details elements be centered
-    with the tip of the arrow across browsers. 
-  */
-  details > summary::before {
-    content: "▸";
-    display: inline-block;
-    text-align: center;
-    padding-right: 0.75ch;
-    width: 1ch;
-    font-family: monospace, monospace;
-    transform: scale(1.5) translateY(-0.05em);
-  }
-
-  details[open] > summary::before {
-    content: "▾";
-  }
-
-  details[open] > summary {
-    margin-bottom: 0.5em;
-  }
-
   pre {
     overflow-x: auto;
     font-family: monospace, monospace;
@@ -178,6 +133,7 @@
 
 <script>
   import Button from "./Button.svelte";
+  import Details from "./Details.svelte";
   import NumericInput from "./NumericInput.svelte";
   import SolveWorker from "./solveWorker.js?worker";
   import favicon from "/favicon-light.svg?url";
@@ -387,72 +343,68 @@
       }}">Remove Color</Button
     >
   </div>
-  <details>
-    <summary>Advanced Options</summary>
-    <div>
-      <NumericInput
-        bind:value="{preferredMultiple}"
-        display="{dollars}"
-        transforms="{{
-          round: [{ limit: 10, multiple: 1 }, { multiple: 25 }],
-          initialScale: 3,
-        }}"
-        min="1">Preferred Value Multiple</NumericInput
-      >
-      <NumericInput
-        bind:value="{preferredMultipleWeight}"
-        transforms="{{
-          round: [{ limit: 10, multiple: 1 }, { multiple: 5 }],
-          initialScale: 10,
-        }}"
-        min="0">Value Multiple Preference Weight</NumericInput
-      >
-      <NumericInput
-        bind:value="{chipsValueMultiple}"
-        display="{dollars}"
-        transforms="{{
-          round: [{ limit: 5, multiple: 1 }, { multiple: 5 }],
-          initialScale: 3,
-        }}"
-        min="1">Required Value Multiple</NumericInput
-      >
-      <NumericInput
-        bind:value="{chipsMultiple}"
-        transforms="{{
-          round: [{ limit: 10, multiple: 1 }, { multiple: 5 }],
-          initialScale: 10,
-        }}"
-        min="1">Quantity Multiple</NumericInput
-      >
-      <details>
-        <summary>Raw Optimizer Model</summary>
-        <div>
-          <p>Run the model with <a href="https://www.scipopt.org/">SCIP</a>.</p>
-          <pre>{model}</pre>
-          <div class="buttons">
-            <Button
-              style="flex-grow: 1; width: 50%;"
-              on:click="{async () => {
-                await navigator.clipboard?.writeText(model);
-              }}">Copy Model</Button
-            >
-            <Button
-              style="flex-grow: 1; width: 50%;"
-              on:click="{() => {
-                Object.assign(document.createElement('a'), {
-                  href: URL.createObjectURL(
-                    new Blob([model], { type: 'text/plain' }),
-                  ),
-                  download: 'poker_model.cip',
-                  target: '_blank',
-                }).click();
-              }}">Download Model</Button
-            >
-          </div>
-        </div>
-      </details>
-    </div>
-  </details>
+  <Details>
+    <span slot="summary">Advanced Options</span>
+    <NumericInput
+      bind:value="{preferredMultiple}"
+      display="{dollars}"
+      transforms="{{
+        round: [{ limit: 10, multiple: 1 }, { multiple: 25 }],
+        initialScale: 3,
+      }}"
+      min="1">Preferred Value Multiple</NumericInput
+    >
+    <NumericInput
+      bind:value="{preferredMultipleWeight}"
+      transforms="{{
+        round: [{ limit: 10, multiple: 1 }, { multiple: 5 }],
+        initialScale: 10,
+      }}"
+      min="0">Value Multiple Preference Weight</NumericInput
+    >
+    <NumericInput
+      bind:value="{chipsValueMultiple}"
+      display="{dollars}"
+      transforms="{{
+        round: [{ limit: 5, multiple: 1 }, { multiple: 5 }],
+        initialScale: 3,
+      }}"
+      min="1">Required Value Multiple</NumericInput
+    >
+    <NumericInput
+      bind:value="{chipsMultiple}"
+      transforms="{{
+        round: [{ limit: 10, multiple: 1 }, { multiple: 5 }],
+        initialScale: 10,
+      }}"
+      min="1">Quantity Multiple</NumericInput
+    >
+    <Details>
+      <span slot="summary">Raw Optimizer Model</span>
+      <p>Run the model with <a href="https://www.scipopt.org/">SCIP</a>.</p>
+      <pre>{model}</pre>
+      <div class="buttons">
+        <Button
+          style="flex-grow: 1; width: 50%;"
+          on:click="{async () => {
+            await navigator.clipboard?.writeText(model);
+          }}">Copy Model</Button
+        >
+        <Button
+          style="flex-grow: 1; width: 50%;"
+          on:click="{() => {
+            Object.assign(document.createElement('a'), {
+              href: URL.createObjectURL(
+                new Blob([model], { type: 'text/plain' }),
+              ),
+              download: 'poker_model.cip',
+              target: '_blank',
+            }).click();
+          }}">Download Model</Button
+        >
+      </div>
+    </Details>
+  </Details>
 
   <h2 style:margin-top="calc(1em + 3px)">Results</h2>
 
