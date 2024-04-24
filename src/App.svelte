@@ -153,18 +153,49 @@
     "gray",
   ];
 
-  let numPeople = 7,
-    chipValues = new Array(4).fill(50),
-    chipColors = colors.slice(0, 4),
-    chipsValueMultiple = 5,
-    chipsMultiple = 1,
-    buyIn = 1000,
-    blinds = {
-      small: 10,
-      big: 20,
-    },
-    preferredMultiple = 25,
-    preferredMultipleWeight = 1;
+  let {
+    numPeople,
+    chipValues,
+    chipColors,
+    chipsValueMultiple,
+    chipsMultiple,
+    buyIn,
+    blinds,
+    preferredMultiple,
+    preferredMultipleWeight,
+  } =
+    (() => {
+      try {
+        return JSON.parse(window.localStorage.getItem("settings"));
+      } catch (_) {}
+    })() ?? {};
+  numPeople = numPeople ?? 7;
+  chipValues = chipValues ?? new Array(4).fill(50);
+  chipColors = chipColors ?? colors.slice(0, 4);
+  chipsValueMultiple = chipsValueMultiple ?? 5;
+  chipsMultiple = chipsMultiple ?? 1;
+  buyIn = buyIn ?? 1000;
+  blinds = blinds ?? {
+    small: 10,
+    big: 20,
+  };
+  preferredMultiple = preferredMultiple ?? 25;
+  preferredMultipleWeight = preferredMultipleWeight ?? 1;
+
+  const debouncedStore = debounce((args) => {
+    window.localStorage.setItem("settings", JSON.stringify(args));
+  }, 1000);
+  $: debouncedStore({
+    numPeople,
+    chipValues,
+    chipColors,
+    chipsValueMultiple,
+    chipsMultiple,
+    buyIn,
+    blinds,
+    preferredMultiple,
+    preferredMultipleWeight,
+  });
 
   let worker = new SolveWorker();
   let promiseResolved = true,
