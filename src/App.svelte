@@ -48,6 +48,14 @@
     resize: vertical;
   }
 
+  .loading {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 8em;
+  }
+
   .table-container {
     width: 100%;
     max-width: 100%;
@@ -443,12 +451,12 @@
 
   <h2 style:margin-top="calc(1em + 3px)">Results</h2>
 
-  <div class="table-container">
-    <table>
-      <tbody>
-        {#await solutionPromise}
-          <div>Loading...</div>
-        {:then solution}
+  {#await solutionPromise}
+    <div class="loading">Loading...</div>
+  {:then solution}
+    <div class="table-container">
+      <table>
+        <tbody>
           {#each solution ?? [] as { amount, value }, i}
             <tr>
               <td>
@@ -496,10 +504,26 @@
           {:else}
             <div>No valid solution found!</div>
           {/if}
-        {/await}
-      </tbody>
-    </table>
-  </div>
+        </tbody>
+      </table>
+    </div>
+    {#if solution}
+      <div class="buttons">
+        <Button
+          style="flex-grow: 1; width: 50%;"
+          on:click="{() => {
+            alert('To do');
+          }}">Copy Link to Results</Button
+        >
+        <Button
+          style="flex-grow: 1; width: 50%;"
+          on:click="{() => {
+            alert('To do');
+          }}">Share Results</Button
+        >
+      </div>
+    {/if}
+  {/await}
 </div>
 
 <footer>
