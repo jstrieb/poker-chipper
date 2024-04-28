@@ -504,7 +504,14 @@
 
 <footer>
   <p>
-    Created by <a href="https://jstrieb.github.io">Jacob Strieb</a>.
-    <!-- Check out the code <a href="https://github.com/jstrieb/poker-chipper">on GitHub</a>. -->
+    Created by <a href="https://jstrieb.github.io" target="_blank"
+      >Jacob Strieb</a
+    >.
+  </p>
+  <p>
+    Check out the code <a
+      href="https://github.com/jstrieb/poker-chipper"
+      target="_blank">on GitHub</a
+    >.
   </p>
 </footer>
