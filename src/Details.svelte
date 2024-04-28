@@ -1,4 +1,10 @@
 <style>
+  details {
+    position: relative;
+    top: 0;
+    left: 0;
+  }
+
   details > div {
     display: flex;
     flex-direction: column;
@@ -6,7 +12,6 @@
     align-items: stretch;
     gap: 1em;
     padding-left: 1em;
-    border-left: 2px dashed black;
   }
 
   summary {
@@ -14,7 +19,6 @@
     -webkit-user-select: none;
     user-select: none;
     list-style: none;
-    margin-left: calc(-0.5ch + 2px);
   }
 
   summary::-webkit-details-marker {
@@ -43,11 +47,49 @@
   details[open] > summary {
     margin-bottom: 0.5em;
   }
+
+  button {
+    position: absolute;
+    top: 1.75em;
+    left: -1px;
+    height: calc(100% - 1.75em);
+    border: none;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+    width: 1ch;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+
+  button > div {
+    height: 100%;
+    border-left: 2px dashed var(--main-fg-color);
+  }
+
+  button:hover > div {
+    border-left: 2px solid var(--main-fg-color);
+  }
+
+  button:active > div {
+    border-left: 3px solid var(--main-fg-color);
+  }
 </style>
 
-<details {...$$props} {...$$restProps}>
+<script>
+  let details;
+</script>
+
+<details bind:this="{details}" {...$$props} {...$$restProps}>
   <summary><slot name="summary" /></summary>
   <div>
     <slot />
   </div>
+  <button
+    on:click="{() => {
+      details.removeAttribute('open');
+    }}"><div></div></button
+  >
 </details>
