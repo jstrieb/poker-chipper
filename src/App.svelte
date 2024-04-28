@@ -259,6 +259,7 @@
   <h1>Poker Chipper</h1>
   <img src="{favicon}" alt="Poker Chipper logo" />
 </div>
+
 <p
   style:color="red"
   style:margin="2em 1em 0 1em"
@@ -267,6 +268,7 @@
 >
   Warning: this code is actively under construction.
 </p>
+
 <div class="main">
   <h2>Instructions</h2>
   <div class="instructions">
@@ -279,6 +281,7 @@
       <li>Results are computed at the bottom</li>
     </ul>
   </div>
+
   <h2>Inputs</h2>
   <NumericInput
     bind:value="{numPeople}"
@@ -374,6 +377,7 @@
       }}">Remove Color</Button
     >
   </div>
+
   <Details>
     <span slot="summary">Advanced Options</span>
     <NumericInput
@@ -497,6 +501,7 @@
     </table>
   </div>
 </div>
+
 <footer>
   <p>
     Created by <a href="https://jstrieb.github.io">Jacob Strieb</a>.
