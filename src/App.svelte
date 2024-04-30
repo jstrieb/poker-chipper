@@ -209,10 +209,23 @@
     preferredMultipleWeight,
   });
 
+  const urlParams = Array.from(new URL(window.location).searchParams.entries());
+  const solutionFromUrl = urlParams.map(([c, s]) => {
+    let [_, amount, value] = /(\d+)_(\d+)/.exec(s);
+    (amount = parseInt(amount)), (value = parseInt(value));
+    return { amount, value };
+  });
+  let displayFromUrl = urlParams?.length;
+  $: if (displayFromUrl) {
+    chipColors = urlParams.map(([c, _]) => c);
+  }
+
   let worker = new SolveWorker();
   let promiseResolved = true,
     resolvePromise = () => {};
-  let solutionPromise = new Promise((r) => r());
+  let solutionPromise = new Promise((r) =>
+    r(displayFromUrl ? solutionFromUrl : undefined),
+  );
   const debouncedSolve = debounce((...args) => {
     if (!promiseResolved) {
       worker.terminate();
@@ -244,26 +257,32 @@
         }),
     );
   }, 200);
-  $: debouncedSolve(
-    chipValues,
-    numPeople,
-    chipsValueMultiple,
-    chipsMultiple,
-    buyIn,
-    blinds,
-    preferredMultiple,
-    preferredMultipleWeight,
-  );
-  $: model = buildCip(
-    chipValues,
-    numPeople,
-    chipsValueMultiple,
-    chipsMultiple,
-    buyIn,
-    blinds,
-    preferredMultiple,
-    preferredMultipleWeight,
-  );
+
+  $: if (!displayFromUrl) {
+    debouncedSolve(
+      chipValues,
+      numPeople,
+      chipsValueMultiple,
+      chipsMultiple,
+      buyIn,
+      blinds,
+      preferredMultiple,
+      preferredMultipleWeight,
+    );
+  }
+  let model;
+  $: if (!displayFromUrl) {
+    model = buildCip(
+      chipValues,
+      numPeople,
+      chipsValueMultiple,
+      chipsMultiple,
+      buyIn,
+      blinds,
+      preferredMultiple,
+      preferredMultipleWeight,
+    );
+  }
 </script>
 
 <div class="title">
@@ -282,179 +301,183 @@
 </p>
 
 <div class="main">
-  <h2>Instructions</h2>
-  <div class="instructions">
-    <p>Optimally compute poker chip values for a home game.</p>
-    <br />
-    <ul>
-      <li>Drag or tap numbers to change their value</li>
-      <li>Use the buttons to add or remove chip colors</li>
-      <li>Tap any color to edit it</li>
-      <li>Expand "Advanced Options" to configure the solver</li>
-      <li>Results are computed at the bottom</li>
-    </ul>
-  </div>
+  {#if !displayFromUrl}
+    <h2>Instructions</h2>
+    <div class="instructions">
+      <p>Optimally compute poker chip values for a home game.</p>
+      <br />
+      <ul>
+        <li>Drag or tap numbers to change their value</li>
+        <li>Use the buttons to add or remove chip colors</li>
+        <li>Tap any color to edit it</li>
+        <li>Expand "Advanced Options" to configure the solver</li>
+        <li>Results are computed at the bottom</li>
+      </ul>
+    </div>
 
-  <h2>Inputs</h2>
-  <NumericInput
-    bind:value="{numPeople}"
-    min="1"
-    transforms="{{ initialScale: 20 }}">Number of Players</NumericInput
-  >
-  <NumericInput
-    bind:value="{buyIn}"
-    display="{dollars}"
-    transforms="{{
-      round: [
-        { limit: 1000, multiple: 100 },
-        { limit: 5000, multiple: 500 },
-        { multiple: 2500 },
-      ],
-      initialScale: 1 / 10,
-    }}"
-    min="100">Buy In</NumericInput
-  >
-  <NumericInput
-    bind:value="{blinds.big}"
-    display="{dollars}"
-    transforms="{{
-      round: [{ limit: 75, multiple: 5 }, { multiple: 25 }],
-      initialScale: 2,
-    }}"
-    min="5">Big Blind</NumericInput
-  >
-  <NumericInput
-    bind:value="{blinds.small}"
-    display="{dollars}"
-    transforms="{{
-      round: [{ limit: 75, multiple: 5 }, { multiple: 25 }],
-      initialScale: 2,
-    }}"
-    min="5">Small Blind</NumericInput
-  >
-  {#each chipValues as value, i}
+    <h2>Inputs</h2>
     <NumericInput
-      bind:value
+      bind:value="{numPeople}"
       min="1"
+      transforms="{{ initialScale: 20 }}">Number of Players</NumericInput
+    >
+    <NumericInput
+      bind:value="{buyIn}"
+      display="{dollars}"
       transforms="{{
         round: [
-          { limit: 10, multiple: 1 },
-          { limit: 50, multiple: 5 },
-          { multiple: 25 },
+          { limit: 1000, multiple: 100 },
+          { limit: 5000, multiple: 500 },
+          { multiple: 2500 },
         ],
-        initialScale: 4,
+        initialScale: 1 / 10,
       }}"
+      min="100">Buy In</NumericInput
     >
-      Total <span
-        contenteditable="true"
-        class:underline="{true}"
-        style:--color="{chipColors[i].toLocaleLowerCase() !== "white"
-          ? chipColors[i]
-          : "black"}"
-        bind:textContent="{chipColors[i]}"
-        on:focus="{select}"
-        on:input="{(e) => {
-          // Must use innerText over textContent to handle newlines
-          const text = e.target.innerText.replaceAll(/[^a-zA-Z]+/gm, '');
-          if (text !== e.target.innerText) {
-            // TODO: Fix cursor reset
-            chipColors[i] = text;
-            if (text) {
-              e.target.blur();
-            }
-          }
+    <NumericInput
+      bind:value="{blinds.big}"
+      display="{dollars}"
+      transforms="{{
+        round: [{ limit: 75, multiple: 5 }, { multiple: 25 }],
+        initialScale: 2,
+      }}"
+      min="5">Big Blind</NumericInput
+    >
+    <NumericInput
+      bind:value="{blinds.small}"
+      display="{dollars}"
+      transforms="{{
+        round: [{ limit: 75, multiple: 5 }, { multiple: 25 }],
+        initialScale: 2,
+      }}"
+      min="5">Small Blind</NumericInput
+    >
+    {#each chipValues as value, i}
+      <NumericInput
+        bind:value
+        min="1"
+        transforms="{{
+          round: [
+            { limit: 10, multiple: 1 },
+            { limit: 50, multiple: 5 },
+            { multiple: 25 },
+          ],
+          initialScale: 4,
         }}"
-      ></span> Chips</NumericInput
-    >
-  {/each}
-  <div class="buttons">
-    <Button
-      style="flex-grow: 1; width: 50%;"
-      on:click="{() => {
-        const newColor = colors[chipColors.length % colors.length];
-        chipColors.push(newColor);
-        chipValues.push(chipValues[chipValues.length - 1]);
-        chipColors = chipColors;
-        chipValues = chipValues;
-      }}">Add Color</Button
-    >
-    <Button
-      style="flex-grow: 1; width: 50%;"
-      on:click="{() => {
-        if (chipValues.length > 1) {
-          chipColors.pop();
-          chipValues.pop();
+      >
+        Total <span
+          contenteditable="true"
+          class:underline="{true}"
+          style:--color="{chipColors[i].toLocaleLowerCase() !== "white"
+            ? chipColors[i]
+            : "black"}"
+          bind:textContent="{chipColors[i]}"
+          on:focus="{select}"
+          on:input="{(e) => {
+            // Must use innerText over textContent to handle newlines
+            const text = e.target.innerText.replaceAll(/[^a-zA-Z]+/gm, '');
+            if (text !== e.target.innerText) {
+              // TODO: Fix cursor reset
+              chipColors[i] = text;
+              if (text) {
+                e.target.blur();
+              }
+            }
+          }}"
+        ></span> Chips</NumericInput
+      >
+    {/each}
+    <div class="buttons">
+      <Button
+        style="flex-grow: 1; width: 50%;"
+        on:click="{() => {
+          const newColor = colors[chipColors.length % colors.length];
+          chipColors.push(newColor);
+          chipValues.push(chipValues[chipValues.length - 1]);
           chipColors = chipColors;
           chipValues = chipValues;
-        }
-      }}">Remove Color</Button
-    >
-  </div>
+        }}">Add Color</Button
+      >
+      <Button
+        style="flex-grow: 1; width: 50%;"
+        on:click="{() => {
+          if (chipValues.length > 1) {
+            chipColors.pop();
+            chipValues.pop();
+            chipColors = chipColors;
+            chipValues = chipValues;
+          }
+        }}">Remove Color</Button
+      >
+    </div>
 
-  <Details>
-    <span slot="summary">Advanced Options</span>
-    <NumericInput
-      bind:value="{preferredMultiple}"
-      display="{dollars}"
-      transforms="{{
-        round: [{ limit: 10, multiple: 1 }, { multiple: 25 }],
-        initialScale: 3,
-      }}"
-      min="1">Preferred Value Multiple</NumericInput
-    >
-    <NumericInput
-      bind:value="{preferredMultipleWeight}"
-      transforms="{{
-        round: [{ limit: 10, multiple: 1 }, { multiple: 5 }],
-        initialScale: 10,
-      }}"
-      min="0">Value Multiple Preference Weight</NumericInput
-    >
-    <NumericInput
-      bind:value="{chipsValueMultiple}"
-      display="{dollars}"
-      transforms="{{
-        round: [{ limit: 5, multiple: 1 }, { multiple: 5 }],
-        initialScale: 3,
-      }}"
-      min="1">Required Value Multiple</NumericInput
-    >
-    <NumericInput
-      bind:value="{chipsMultiple}"
-      transforms="{{
-        round: [{ limit: 10, multiple: 1 }, { multiple: 5 }],
-        initialScale: 10,
-      }}"
-      min="1">Quantity Multiple</NumericInput
-    >
     <Details>
-      <span slot="summary">Raw Optimizer Model</span>
-      <p>Run the model with <a href="https://www.scipopt.org/">SCIP</a>.</p>
-      <pre>{model}</pre>
-      <div class="buttons">
-        <Button
-          style="flex-grow: 1; width: 50%;"
-          on:click="{async () => {
-            await navigator.clipboard?.writeText(model);
-          }}">Copy Model</Button
-        >
-        <Button
-          style="flex-grow: 1; width: 50%;"
-          on:click="{() => {
-            Object.assign(document.createElement('a'), {
-              href: URL.createObjectURL(
-                new Blob([model], { type: 'text/plain' }),
-              ),
-              download: 'poker_model.cip',
-              target: '_blank',
-            }).click();
-          }}">Download Model</Button
-        >
-      </div>
+      <span slot="summary">Advanced Options</span>
+      <NumericInput
+        bind:value="{preferredMultiple}"
+        display="{dollars}"
+        transforms="{{
+          round: [{ limit: 10, multiple: 1 }, { multiple: 25 }],
+          initialScale: 3,
+        }}"
+        min="1">Preferred Value Multiple</NumericInput
+      >
+      <NumericInput
+        bind:value="{preferredMultipleWeight}"
+        transforms="{{
+          round: [{ limit: 10, multiple: 1 }, { multiple: 5 }],
+          initialScale: 10,
+        }}"
+        min="0">Value Multiple Preference Weight</NumericInput
+      >
+      <NumericInput
+        bind:value="{chipsValueMultiple}"
+        display="{dollars}"
+        transforms="{{
+          round: [{ limit: 5, multiple: 1 }, { multiple: 5 }],
+          initialScale: 3,
+        }}"
+        min="1">Required Value Multiple</NumericInput
+      >
+      <NumericInput
+        bind:value="{chipsMultiple}"
+        transforms="{{
+          round: [{ limit: 10, multiple: 1 }, { multiple: 5 }],
+          initialScale: 10,
+        }}"
+        min="1">Quantity Multiple</NumericInput
+      >
+      <Details>
+        <span slot="summary">Raw Optimizer Model</span>
+        <p>Run the model with <a href="https://www.scipopt.org/">SCIP</a>.</p>
+        <pre>{model}</pre>
+        <div class="buttons">
+          <Button
+            style="flex-grow: 1; width: 50%;"
+            on:click="{async () => {
+              await navigator.clipboard?.writeText(model);
+            }}">Copy Model</Button
+          >
+          <Button
+            style="flex-grow: 1; width: 50%;"
+            on:click="{() => {
+              Object.assign(document.createElement('a'), {
+                href: URL.createObjectURL(
+                  new Blob([model], { type: 'text/plain' }),
+                ),
+                download: 'poker_model.cip',
+                target: '_blank',
+              }).click();
+            }}">Download Model</Button
+          >
+        </div>
+      </Details>
     </Details>
-  </Details>
 
-  <h2 style:margin-top="calc(1em + 3px)">Results</h2>
+    <h2 style:margin-top="calc(1em + 3px)">Results</h2>
+  {:else}
+    <h2>Chips</h2>
+  {/if}
 
   {#await solutionPromise}
     <div class="loading">Loading...</div>
@@ -503,7 +526,16 @@
             <tr><td colspan="7"><hr /></td></tr>
             <tr>
               <td colspan="5"></td>
-              <td><b>{dollars(buyIn)}</b></td>
+              <td
+                ><b
+                  >{dollars(
+                    solution.reduce(
+                      (a, { amount, value }) => a + amount * value,
+                      0,
+                    ),
+                  )}</b
+                ></td
+              >
               <td>total</td>
             </tr>
           {:else}
@@ -512,12 +544,21 @@
         </tbody>
       </table>
     </div>
-    {#if solution}
+    {#if solution && !displayFromUrl}
       <div class="buttons">
         <Button
           style="flex-grow: 1; width: 50%;"
-          on:click="{() => {
-            alert('To do');
+          on:click="{async () => {
+            const u = new URL(window.location);
+            u.search = new URLSearchParams(
+              Object.fromEntries(
+                solution.map(({ amount, value }, i) => [
+                  chipColors[i].toLocaleLowerCase(),
+                  `${amount}_${value}`,
+                ]),
+              ),
+            );
+            navigator.clipboard?.writeText(u.toString());
           }}">Copy Link to Results</Button
         >
         <Button
@@ -527,6 +568,12 @@
           }}">Share Results</Button
         >
       </div>
+    {:else if displayFromUrl}
+      <Button
+        on:click="{() => {
+          displayFromUrl = false;
+        }}">Calculate New Values</Button
+      >
     {/if}
   {/await}
 </div>
