@@ -283,6 +283,36 @@
       preferredMultipleWeight,
     );
   }
+
+  function urlForSolution(solution) {
+    const u = new URL(window.location);
+    u.search = new URLSearchParams(
+      Object.fromEntries(
+        solution.map(({ amount, value }, i) => [
+          chipColors[i].toLocaleLowerCase(),
+          `${amount}_${value}`,
+        ]),
+      ),
+    );
+    return u.toString();
+  }
+
+  function solutionText(solution) {
+    const total = solution.reduce(
+      (a, { amount, value }) => a + amount * value,
+      0,
+    );
+    return (
+      solution
+        .map(
+          ({ amount, value }, i) =>
+            `${chipColors[i].toLocaleLowerCase()}: ${amount} chips x ${dollars(value)} each = ${dollars(amount * value)}`,
+        )
+        .join("\n") +
+      "\nTotal: " +
+      dollars(total)
+    );
+  }
 </script>
 
 <div class="title">
@@ -549,24 +579,21 @@
         <Button
           style="flex-grow: 1; width: 50%;"
           on:click="{async () => {
-            const u = new URL(window.location);
-            u.search = new URLSearchParams(
-              Object.fromEntries(
-                solution.map(({ amount, value }, i) => [
-                  chipColors[i].toLocaleLowerCase(),
-                  `${amount}_${value}`,
-                ]),
-              ),
-            );
-            navigator.clipboard?.writeText(u.toString());
+            navigator.clipboard?.writeText(urlForSolution(solution));
           }}">Copy Link to Results</Button
         >
-        <Button
-          style="flex-grow: 1; width: 50%;"
-          on:click="{() => {
-            alert('To do');
-          }}">Share Results</Button
-        >
+        {#if navigator.share}
+          <Button
+            style="flex-grow: 1; width: 50%;"
+            on:click="{async () => {
+              await navigator.share({
+                title: 'Optimal poker chip allocation',
+                text: solutionText(solution),
+                url: urlForSolution(solution),
+              });
+            }}">Share Results</Button
+          >
+        {/if}
       </div>
     {:else if displayFromUrl}
       <Button
