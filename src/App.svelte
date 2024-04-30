@@ -131,6 +131,10 @@
     cursor: pointer;
   }
 
+  a:hover {
+    text-decoration-thickness: 2px;
+  }
+
   footer {
     flex-grow: 1;
     justify-content: flex-end;
@@ -286,6 +290,7 @@
       <li>Drag or tap numbers to change their value</li>
       <li>Use the buttons to add or remove chip colors</li>
       <li>Tap any color to edit it</li>
+      <li>Expand "Advanced Options" to configure the solver</li>
       <li>Results are computed at the bottom</li>
     </ul>
   </div>
