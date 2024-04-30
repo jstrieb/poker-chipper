@@ -74,3 +74,44 @@ export function debounce(f, delay) {
 export function select(e) {
   window.getSelection().selectAllChildren(e.target ?? e);
 }
+
+export function compress(data) {
+  if (!data?.length) {
+    return;
+  }
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+  canvas.width = canvas.height = Math.ceil(Math.sqrt(data.length / 3));
+  const image = context.createImageData(canvas.width, canvas.height);
+  for (let i = 0; i < data.length; i++) {
+    image.data[i] = data[i];
+  }
+  context.putImageData(image, 0, 0);
+  console.log("image", image);
+  return canvas.toDataURL("image/png").replace(/(.*,)+/g, "");
+}
+
+export function decompress(data) {
+  if (!data?.length) {
+    return;
+  }
+  const image = new Image();
+  image.setAttribute("src", `data:image/png;base64,${data}`);
+  return new Promise((r) => {
+    image.addEventListener("load", () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = canvas.height = 1000;
+      const context = canvas.getContext("2d");
+      context.drawImage(image, 0, 0);
+      const result = context.getImageData(0, 0, image.width, image.height);
+      console.log("result", result);
+      r(result.data);
+    });
+  });
+}
+
+const d = compress(new TextEncoder().encode("This is a test!".repeat(100)));
+console.log(d, d.length);
+decompress(d)
+  .then((r) => new TextDecoder().decode(r))
+  .then(console.log);
