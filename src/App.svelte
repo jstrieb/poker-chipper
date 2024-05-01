@@ -502,6 +502,12 @@
           >
         </div>
       </Details>
+      <Button
+        on:click="{() => {
+          window.localStorage.removeItem('settings');
+          window.location.reload();
+        }}">Reset All to Default</Button
+      >
     </Details>
 
     <h2 style:margin-top="calc(1em + 3px)">Results</h2>
