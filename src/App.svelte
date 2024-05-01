@@ -151,7 +151,7 @@
   import favicon from "/favicon-light.svg?url";
 
   import { buildCip } from "./solve.js";
-  import { debounce, dollars, select } from "./helpers.js";
+  import { debounce, dollars, select, titleCase } from "./helpers.js";
 
   const colors = [
     "white",
@@ -306,11 +306,12 @@
       solution
         .map(
           ({ amount, value }, i) =>
-            `${chipColors[i].toLocaleLowerCase()}: ${amount} chips x ${dollars(value)} each = ${dollars(amount * value)}`,
+            `${titleCase(chipColors[i])}: ${amount} chips x ${dollars(value)} each = ${dollars(amount * value)}`,
         )
         .join("\n") +
-      "\nTotal: " +
-      dollars(total)
+      "\n------\nTotal: " +
+      dollars(total) +
+      "\n"
     );
   }
 </script>

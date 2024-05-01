@@ -74,3 +74,12 @@ export function debounce(f, delay) {
 export function select(e) {
   window.getSelection().selectAllChildren(e.target ?? e);
 }
+
+export function titleCase(s) {
+  return s
+    .split(" ")
+    .map(
+      (w) => w.slice(0, 1).toLocaleUpperCase() + w.slice(1).toLocaleLowerCase(),
+    )
+    .join(" ");
+}
