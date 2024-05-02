@@ -9,14 +9,13 @@ export function reloadModule() {
 reloadModule();
 
 export function buildCip(
-  chipValues,
-  numPeople,
-  chipsValueInterval,
-  chipsMultiple,
-  buyIn,
-  blinds,
-  preferredMultiple,
-  preferredMultipleWeight,
+  { chipValues, numPeople, buyIn, blinds },
+  {
+    chipsValueInterval,
+    chipsMultiple,
+    preferredMultiple,
+    preferredMultipleWeight,
+  },
 ) {
   const chips = chipValues.map((v, i) => [`color_${i}`, v]);
 
@@ -188,14 +187,14 @@ END
  * the optimal values for us, subject to an "objective" function we subjectively
  * create.
  */
-export async function solve(...args) {
-  if (args.some((x) => x == null)) {
+export async function solve(inputs, settings) {
+  if ([inputs, settings].some((o) => Object.values(o).some((x) => x == null))) {
     return undefined;
   }
   const Module = await modulePromise;
   const { FS, callMain: main } = Module;
   // Build a model file and write it to the virtual filesystem
-  const cip = buildCip(...args);
+  const cip = buildCip(inputs, settings);
   // console.log(cip);
   FS.writeFile("model.cip", cip);
   // Run the solver on the model file, write solution to virtual filesystem
@@ -233,7 +232,7 @@ export async function solve(...args) {
   if (Object.entries(solution).length === 0) {
     return undefined;
   }
-  const result = new Array(args[0].length).fill().map((_, i) => ({
+  const result = new Array(inputs.chipValues.length).fill().map((_, i) => ({
     amount: solution[`amount_color_${i}`] ?? 0,
     value: solution[`value_color_${i}`] ?? 0,
   }));

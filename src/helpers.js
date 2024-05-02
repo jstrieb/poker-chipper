@@ -83,3 +83,11 @@ export function titleCase(s) {
     )
     .join(" ");
 }
+
+export function loadFromLocalStorage(key) {
+  let result;
+  try {
+    result = JSON.parse(window.localStorage.getItem(key));
+  } catch (_) {}
+  return result ?? {};
+}

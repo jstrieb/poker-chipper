@@ -151,7 +151,13 @@
   import favicon from "/favicon-light.svg?url";
 
   import { buildCip } from "./solve.js";
-  import { debounce, dollars, select, titleCase } from "./helpers.js";
+  import {
+    debounce,
+    dollars,
+    select,
+    titleCase,
+    loadFromLocalStorage,
+  } from "./helpers.js";
 
   const colors = [
     "white",
@@ -165,49 +171,34 @@
     "gray",
   ];
 
-  let {
-    numPeople,
-    chipValues,
-    chipColors,
-    chipsValueMultiple,
-    chipsMultiple,
-    buyIn,
-    blinds,
-    preferredMultiple,
-    preferredMultipleWeight,
-  } =
-    (() => {
-      try {
-        return JSON.parse(window.localStorage.getItem("settings"));
-      } catch (_) {}
-    })() ?? {};
-  numPeople = numPeople ?? 7;
-  chipValues = chipValues ?? new Array(4).fill(50);
-  chipColors = chipColors ?? colors.slice(0, 4);
-  chipsValueMultiple = chipsValueMultiple ?? 5;
-  chipsMultiple = chipsMultiple ?? 1;
-  buyIn = buyIn ?? 1000;
-  blinds = blinds ?? {
-    small: 10,
-    big: 20,
+  // Note that chipColors is not part of the inputs object because otherwise
+  // changing chip colors would force the solver to recalculate, which isn't
+  // actually functionally necessary.
+  let chipColors =
+    loadFromLocalStorage("inputs").chipColors ?? colors.slice(0, 4);
+  let inputs = {
+    numPeople: 7,
+    chipValues: new Array(4).fill(50),
+    buyIn: 1000,
+    blinds: {
+      small: 10,
+      big: 20,
+    },
+    ...loadFromLocalStorage("inputs"),
   };
-  preferredMultiple = preferredMultiple ?? 25;
-  preferredMultipleWeight = preferredMultipleWeight ?? 1;
+  let settings = {
+    chipsValueMultiple: 5,
+    chipsMultiple: 1,
+    preferredMultiple: 25,
+    preferredMultipleWeight: 1,
+    ...loadFromLocalStorage("settings"),
+  };
 
-  const debouncedStore = debounce((args) => {
-    window.localStorage.setItem("settings", JSON.stringify(args));
+  const debouncedStore = debounce((key, o) => {
+    window.localStorage.setItem(key, JSON.stringify(o));
   }, 1000);
-  $: debouncedStore({
-    numPeople,
-    chipValues,
-    chipColors,
-    chipsValueMultiple,
-    chipsMultiple,
-    buyIn,
-    blinds,
-    preferredMultiple,
-    preferredMultipleWeight,
-  });
+  $: debouncedStore("inputs", { ...inputs, chipColors });
+  $: debouncedStore("settings", settings);
 
   const urlParams = Array.from(new URL(window.location).searchParams.entries());
   const solutionFromUrl = urlParams.map(([c, s]) => {
@@ -259,29 +250,11 @@
   }, 200);
 
   $: if (!displayFromUrl) {
-    debouncedSolve(
-      chipValues,
-      numPeople,
-      chipsValueMultiple,
-      chipsMultiple,
-      buyIn,
-      blinds,
-      preferredMultiple,
-      preferredMultipleWeight,
-    );
+    debouncedSolve(inputs, settings);
   }
   let model;
   $: if (!displayFromUrl) {
-    model = buildCip(
-      chipValues,
-      numPeople,
-      chipsValueMultiple,
-      chipsMultiple,
-      buyIn,
-      blinds,
-      preferredMultiple,
-      preferredMultipleWeight,
-    );
+    model = buildCip(inputs, settings);
   }
 
   function urlForSolution(solution) {
@@ -348,12 +321,12 @@
 
     <h2>Inputs</h2>
     <NumericInput
-      bind:value="{numPeople}"
+      bind:value="{inputs.numPeople}"
       min="1"
       transforms="{{ initialScale: 20 }}">Number of Players</NumericInput
     >
     <NumericInput
-      bind:value="{buyIn}"
+      bind:value="{inputs.buyIn}"
       display="{dollars}"
       transforms="{{
         round: [
@@ -366,7 +339,7 @@
       min="100">Buy In</NumericInput
     >
     <NumericInput
-      bind:value="{blinds.big}"
+      bind:value="{inputs.blinds.big}"
       display="{dollars}"
       transforms="{{
         round: [{ limit: 75, multiple: 5 }, { multiple: 25 }],
@@ -375,7 +348,7 @@
       min="5">Big Blind</NumericInput
     >
     <NumericInput
-      bind:value="{blinds.small}"
+      bind:value="{inputs.blinds.small}"
       display="{dollars}"
       transforms="{{
         round: [{ limit: 75, multiple: 5 }, { multiple: 25 }],
@@ -383,7 +356,7 @@
       }}"
       min="5">Small Blind</NumericInput
     >
-    {#each chipValues as value, i}
+    {#each inputs.chipValues as value, i}
       <NumericInput
         bind:value
         min="1"
@@ -424,19 +397,21 @@
         on:click="{() => {
           const newColor = colors[chipColors.length % colors.length];
           chipColors.push(newColor);
-          chipValues.push(chipValues[chipValues.length - 1]);
+          inputs.chipValues.push(
+            inputs.chipValues[inputs.chipValues.length - 1],
+          );
           chipColors = chipColors;
-          chipValues = chipValues;
+          inputs.chipValues = inputs.chipValues;
         }}">Add Color</Button
       >
       <Button
         style="flex-grow: 1; width: 50%;"
         on:click="{() => {
-          if (chipValues.length > 1) {
+          if (inputs.chipValues.length > 1) {
             chipColors.pop();
-            chipValues.pop();
+            inputs.chipValues.pop();
             chipColors = chipColors;
-            chipValues = chipValues;
+            inputs.chipValues = inputs.chipValues;
           }
         }}">Remove Color</Button
       >
@@ -445,7 +420,7 @@
     <Details>
       <span slot="summary">Advanced Options</span>
       <NumericInput
-        bind:value="{preferredMultiple}"
+        bind:value="{settings.preferredMultiple}"
         display="{dollars}"
         transforms="{{
           round: [{ limit: 10, multiple: 1 }, { multiple: 25 }],
@@ -454,7 +429,7 @@
         min="1">Preferred Value Multiple</NumericInput
       >
       <NumericInput
-        bind:value="{preferredMultipleWeight}"
+        bind:value="{settings.preferredMultipleWeight}"
         transforms="{{
           round: [{ limit: 10, multiple: 1 }, { multiple: 5 }],
           initialScale: 10,
@@ -462,7 +437,7 @@
         min="0">Value Multiple Preference Weight</NumericInput
       >
       <NumericInput
-        bind:value="{chipsValueMultiple}"
+        bind:value="{settings.chipsValueMultiple}"
         display="{dollars}"
         transforms="{{
           round: [{ limit: 5, multiple: 1 }, { multiple: 5 }],
@@ -471,7 +446,7 @@
         min="1">Required Value Multiple</NumericInput
       >
       <NumericInput
-        bind:value="{chipsMultiple}"
+        bind:value="{settings.chipsMultiple}"
         transforms="{{
           round: [{ limit: 10, multiple: 1 }, { multiple: 5 }],
           initialScale: 10,
@@ -506,6 +481,7 @@
       <Button
         on:click="{() => {
           window.localStorage.removeItem('settings');
+          window.localStorage.removeItem('inputs');
           window.location.reload();
         }}">Reset All to Default</Button
       >
