@@ -191,6 +191,7 @@
     chipsMultiple: 1,
     preferredMultiple: 25,
     preferredMultipleWeight: 1,
+    minChipsPerColor: 2,
     ...loadFromLocalStorage("settings"),
   };
 
@@ -452,6 +453,14 @@
           initialScale: 10,
         }}"
         min="1">Quantity Multiple</NumericInput
+      >
+      <NumericInput
+        bind:value="{settings.minChipsPerColor}"
+        transforms="{{
+          round: [{ limit: 10, multiple: 1 }, { multiple: 5 }],
+          initialScale: 10,
+        }}"
+        min="1">Minimum Number of Chips Per Color</NumericInput
       >
       <Details>
         <span slot="summary">Raw Optimizer Model</span>

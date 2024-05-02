@@ -15,6 +15,7 @@ export function buildCip(
     chipsMultiple,
     preferredMultiple,
     preferredMultipleWeight,
+    minChipsPerColor,
   },
 ) {
   const chips = chipValues.map((v, i) => [`color_${i}`, v]);
@@ -74,7 +75,7 @@ export function buildCip(
   );
   Object.entries(values).forEach(([color, { amount, value }]) => {
     // Amounts and values must be greater than zero
-    addCons(`<${amount}>[I] >= 1`);
+    addCons(`<${amount}>[I] >= ${minChipsPerColor}`);
     addCons(`<${value}>[I] >= 1`);
     // Every chip value must be a multiple of this interval (e.g., 25 cents)
     addCons(`<${mod(value, chipsValueInterval)}>[I] == 0`);
