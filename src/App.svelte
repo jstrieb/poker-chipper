@@ -192,6 +192,7 @@
     preferredMultiple: 25,
     preferredMultipleWeight: 1,
     minChipsPerColor: 2,
+    buyInRange: 0,
     ...loadFromLocalStorage("settings"),
   };
 
@@ -452,6 +453,20 @@
           initialScale: 10,
         }}"
         min="1">Minimum Number of Chips Per Color</NumericInput
+      >
+      <NumericInput
+        bind:value="{settings.buyInRange}"
+        display="{(v) => `±${dollars(v)}`}"
+        transforms="{{
+          round: [
+            { limit: 5, multiple: 1 },
+            { limit: 25, multiple: 5 },
+            { limit: 100, multiple: 25 },
+            { multiple: 100 },
+          ],
+          initialScale: 3,
+        }}"
+        min="0">Buy In Range</NumericInput
       >
       <Details>
         <span slot="summary">Raw Optimizer Model</span>

@@ -16,6 +16,7 @@ export function buildCip(
     preferredMultiple,
     preferredMultipleWeight,
     minChipsPerColor,
+    buyInRange,
   },
 ) {
   const chips = chipValues.map((v, i) => [`color_${i}`, v]);
@@ -139,6 +140,12 @@ export function buildCip(
     }
   });
 
+  // The buy in falls in a range (possibly single-element)
+  // TODO: Add soft constraint to encourage not deviating if possible
+  const _buyIn = addVar("buy_in");
+  addCons(`<${_buyIn}>[I] <= ${buyIn + buyInRange}`);
+  addCons(`<${_buyIn}>[I] >= ${buyIn - buyInRange}`);
+
   // The max value chip should never be more than ~20% of the total buy-in
   addCons(`<${values[orderedColors[0]].value}>[I] <= ${buyIn / 5}`);
 
@@ -166,7 +173,7 @@ export function buildCip(
 
   // The chips given to each person must sum to the buy in
   addCons(
-    `${buyIn}-${Object.values(values)
+    `<${_buyIn}>[I]-${Object.values(values)
       .map(({ amount, value }) => `<${amount}>*<${value}>`)
       .join("-")} == 0`,
     "nonlinear",
