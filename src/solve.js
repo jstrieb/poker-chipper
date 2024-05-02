@@ -11,7 +11,7 @@ reloadModule();
 export function buildCip(
   { chipValues, numPeople, buyIn, blinds },
   {
-    chipsValueInterval,
+    chipsValueMultiple,
     chipsMultiple,
     preferredMultiple,
     preferredMultipleWeight,
@@ -84,7 +84,7 @@ export function buildCip(
       [`<${value}>[I] <= 99`, `<${mod(value, 100)}>[I] == 0`].map(anonLinear),
     );
     // Every chip value must be a multiple of this interval (e.g., 25 cents)
-    addCons(`<${mod(value, chipsValueInterval)}>[I] == 0`);
+    addCons(`<${mod(value, chipsValueMultiple)}>[I] == 0`);
     // The amount of each color chip given must be a multiple of chips multiple
     addCons(`<${mod(amount, chipsMultiple)}>[I] == 0`);
     // The amount of each chip times the number of people getting that many
