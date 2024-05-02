@@ -472,13 +472,13 @@
       >
       <NumericInput
         bind:value="{settings.maxChipPercent}"
-        display="{percent}"
+        display="{(v) => `${percent(v)} of buy in`}"
         transforms="{{
           round: [{ limit: 5, multiple: 1 }, { multiple: 5 }],
           initialScale: 5,
         }}"
         min="1"
-        max="100">Max Chip Upper Limit (Percent of Buy In)</NumericInput
+        max="100">Max Chip Upper Limit</NumericInput
       >
       <Details>
         <span slot="summary">Raw Optimizer Model</span>
