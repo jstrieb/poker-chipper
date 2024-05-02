@@ -77,6 +77,10 @@ export function buildCip(
     // Amounts and values must be greater than zero
     addCons(`<${amount}>[I] >= ${minChipsPerColor}`);
     addCons(`<${value}>[I] >= 1`);
+    // Chips above $1 must be multiples of $1
+    addDisjunction(
+      [`<${value}>[I] <= 99`, `<${mod(value, 100)}>[I] == 0`].map(anonLinear),
+    );
     // Every chip value must be a multiple of this interval (e.g., 25 cents)
     addCons(`<${mod(value, chipsValueInterval)}>[I] == 0`);
     // The amount of each color chip given must be a multiple of chips multiple
