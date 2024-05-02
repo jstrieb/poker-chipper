@@ -157,6 +157,7 @@
     select,
     titleCase,
     loadFromLocalStorage,
+    percent,
   } from "./helpers.js";
 
   const colors = [
@@ -193,6 +194,7 @@
     preferredMultipleWeight: 1,
     minChipsPerColor: 2,
     buyInRange: 0,
+    maxChipPercent: 20,
     ...loadFromLocalStorage("settings"),
   };
 
@@ -467,6 +469,16 @@
           initialScale: 3,
         }}"
         min="0">Buy In Range</NumericInput
+      >
+      <NumericInput
+        bind:value="{settings.maxChipPercent}"
+        display="{percent}"
+        transforms="{{
+          round: [{ limit: 5, multiple: 1 }, { multiple: 5 }],
+          initialScale: 5,
+        }}"
+        min="1"
+        max="100">Max Chip Upper Limit (Percent of Buy In)</NumericInput
       >
       <Details>
         <span slot="summary">Raw Optimizer Model</span>

@@ -55,12 +55,19 @@ export function scale(scaleValue) {
   return (x) => Math.floor(x / scaleValue);
 }
 
-const formatter = Intl.NumberFormat(undefined, {
+const dollarFormatter = Intl.NumberFormat(undefined, {
   style: "currency",
   currency: "USD",
 });
 export function dollars(x) {
-  return formatter.format(x / 100);
+  return dollarFormatter.format(x / 100);
+}
+
+const percentFormatter = Intl.NumberFormat(undefined, {
+  style: "percent",
+});
+export function percent(x) {
+  return percentFormatter.format(x / 100);
 }
 
 export function debounce(f, delay) {

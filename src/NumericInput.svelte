@@ -12,6 +12,7 @@
   .label {
     white-space: pre;
     margin-bottom: 2px;
+    overflow: auto;
   }
 
   .input {

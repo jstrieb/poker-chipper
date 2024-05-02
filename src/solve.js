@@ -17,6 +17,7 @@ export function buildCip(
     preferredMultipleWeight,
     minChipsPerColor,
     buyInRange,
+    maxChipPercent,
   },
 ) {
   const chips = chipValues.map((v, i) => [`color_${i}`, v]);
@@ -147,7 +148,9 @@ export function buildCip(
   addCons(`<${_buyIn}>[I] >= ${buyIn - buyInRange}`);
 
   // The max value chip should never be more than ~20% of the total buy-in
-  addCons(`<${values[orderedColors[0]].value}>[I] <= ${buyIn / 5}`);
+  addCons(
+    `<${values[orderedColors[0]].value}>[I] <= ${(buyIn * maxChipPercent) / 100}`,
+  );
 
   if (blinds) {
     const { small } = blinds;
