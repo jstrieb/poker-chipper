@@ -67,6 +67,10 @@
     return x / (1 + Math.abs(x));
   }
 
+  $: if (editable) {
+    editable.focus();
+  }
+
   let moveCount = 0,
     isScrolling = false;
 
@@ -87,9 +91,6 @@
       // Handle regular click
       e.preventDefault();
       editing = true;
-      await tick();
-      // setTimeout necessary to prevent jitter on mobile
-      setTimeout(() => editable.focus(), 10);
     } else {
       moveCount = 0;
       queued = 0;
