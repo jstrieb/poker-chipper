@@ -79,7 +79,11 @@ export function debounce(f, delay) {
 }
 
 export function select(e) {
-  window.getSelection().selectAllChildren(e.target ?? e);
+  if (e.target.select || e.select) {
+    (e.target ?? e).select();
+  } else {
+    window.getSelection().selectAllChildren(e.target ?? e);
+  }
 }
 
 export function titleCase(s) {

@@ -24,14 +24,6 @@
     margin-right: 0.5ch;
   }
 
-  .underline {
-    border-bottom: 2px solid var(--color, var(--main-fg-color));
-    padding: 0 0.3ch;
-    margin: 0 -0.1ch;
-    display: inline-block;
-    line-height: 0.9;
-  }
-
   .buttons {
     display: flex;
     flex-direction: row;
@@ -146,7 +138,9 @@
 <script>
   import Button from "./Button.svelte";
   import Details from "./Details.svelte";
+  import GrowableInput from "./GrowableInput.svelte";
   import NumericInput from "./NumericInput.svelte";
+
   import SolveWorker from "./solveWorker.js?worker";
   import favicon from "/favicon-light.svg?url";
 
@@ -364,26 +358,30 @@
           initialScale: 4,
         }}"
       >
-        Total <span
-          contenteditable="true"
-          class:underline="{true}"
-          style:--color="{chipColors[i].toLocaleLowerCase() !== "white"
+        Total <GrowableInput
+          style="cursor: pointer; 
+          text-transform: capitalize; 
+          border-bottom: 2px solid var(--color, var(--main-fg-color)); 
+          margin: 0 -0.1ch; 
+          display: inline-block; 
+          height: 1em;
+          line-height: 0.9;"
+          --padding="0.3ch"
+          --color="{chipColors[i].toLocaleLowerCase() !== 'white'
             ? chipColors[i]
-            : "black"}"
-          bind:textContent="{chipColors[i]}"
+            : 'black'}"
+          pattern="[a-zA-Z]*"
+          bind:value="{chipColors[i]}"
           on:focus="{select}"
-          on:input="{(e) => {
-            // Must use innerText over textContent to handle newlines
-            const text = e.target.innerText.replaceAll(/[^a-zA-Z]+/gm, '');
-            if (text !== e.target.innerText) {
-              // TODO: Fix cursor reset
-              chipColors[i] = text;
-              if (text) {
-                e.target.blur();
-              }
+          on:beforeinput="{(e) => {
+            if (e.inputType === 'insertLineBreak') {
+              e.target.blur();
+            }
+            if (e.data && !e.data.match(/^[a-zA-Z]*$/)) {
+              e.preventDefault();
             }
           }}"
-        ></span> Chips</NumericInput
+        /> Chips</NumericInput
       >
     {/each}
     <div class="buttons">

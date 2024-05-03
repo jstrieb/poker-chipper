@@ -7,8 +7,8 @@
 </style>
 
 <script>
-  export let value = "";
-  let input;
+  export let value = "",
+    input = undefined;
 
   const canvas = document.createElement("canvas").getContext("2d");
   function width(s) {
@@ -25,6 +25,7 @@
   bind:this="{input}"
   style:width="calc({width(value, input)}px + 2 * var(--padding, 3px))"
   on:input
+  on:beforeinput
   on:focus
   on:blur
   {...$$props}
