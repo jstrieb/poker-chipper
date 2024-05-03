@@ -359,18 +359,19 @@
         }}"
       >
         Total <GrowableInput
-          style="cursor: pointer; 
-          text-transform: capitalize; 
-          border-bottom: 2px solid var(--color, var(--main-fg-color)); 
-          margin: 0 -0.1ch; 
-          display: inline-block; 
-          height: 1em;
-          line-height: 0.9;"
+          style="
+            cursor: pointer; 
+            text-transform: capitalize; 
+            border-bottom: 2px solid var(--color, var(--main-fg-color)); 
+            margin: 0 -0.1ch; 
+            display: inline-block; 
+            height: 1em;
+            line-height: 0.9;
+          "
           --padding="0.3ch"
           --color="{chipColors[i].toLocaleLowerCase() !== 'white'
             ? chipColors[i]
             : 'black'}"
-          pattern="[a-zA-Z]*"
           bind:value="{chipColors[i]}"
           on:focus="{select}"
           on:beforeinput="{(e) => {
@@ -530,28 +531,23 @@
                   class="chip"
                   style:--color="{chipColors[i].toLocaleLowerCase()}"
                   on:click="{(e) => e.target.nextElementSibling.focus()}"
-                ></button><span
-                  contenteditable="true"
+                ></button><GrowableInput
+                  style="
+                    cursor: pointer; 
+                    text-transform: capitalize;
+                    text-align: left;
+                  "
+                  bind:value="{chipColors[i]}"
                   on:focus="{select}"
-                  on:input="{(e) => {
-                    // Must use innerText over textContent to handle newlines
-                    const text = e.target.innerText.replaceAll(
-                      /[^a-zA-Z]+/gm,
-                      '',
-                    );
-                    if (text !== e.target.innerText) {
-                      // TODO: Fix cursor reset
-                      e.target.textContent = text;
-                      if (text) {
-                        e.target.blur();
-                      }
+                  on:beforeinput="{(e) => {
+                    if (e.inputType === 'insertLineBreak') {
+                      e.target.blur();
+                    }
+                    if (e.data && !e.data.match(/^[a-zA-Z]*$/)) {
+                      e.preventDefault();
                     }
                   }}"
-                  on:blur="{(e) => {
-                    const text = e.target.textContent;
-                    chipColors[i] = text;
-                  }}">{chipColors[i]}</span
-                >
+                />
               </td>
               <td><b>{amount}</b> chips</td>
               <td>&times;</td>
