@@ -34,8 +34,11 @@
 </style>
 
 <script>
-  import { spring } from "svelte/motion";
+  import GrowableInput from "./GrowableInput.svelte";
+
   import { compose, roundToNearest, scale, select } from "./helpers.js";
+
+  import { spring } from "svelte/motion";
   import { tick } from "svelte";
 
   export let value,
@@ -150,10 +153,8 @@
     </div>
   {:else}
     <div class="input">
-      <span
+      <GrowableInput
         inputmode="numeric"
-        contenteditable
-        bind:this="{editable}"
         on:blur="{() => {
           value = parseInt(value || 0);
           editing = false;
@@ -163,22 +164,18 @@
           deltaX.set(0);
           initialValue = value;
         }}"
-        bind:innerText="{value}"
-        on:focus="{(e) => select(e)}"
-        on:input="{(e) => {
-          // Must use innerText over textContent to handle newlines
-          const text = e.target.innerText.replaceAll(/[^0-9]+/gm, '');
-          if (text !== e.target.innerText) {
-            // TODO: Fix cursor reset
-            if (text) {
-              value = parseInt(text);
-              e.target.blur();
-            } else {
-              value = text;
-            }
+        bind:input="{editable}"
+        bind:value
+        on:focus="{select}"
+        on:beforeinput="{(e) => {
+          if (e.inputType === 'insertLineBreak') {
+            e.target.blur();
+          }
+          if (e.data && !e.data.match(/^[0-9]*$/)) {
+            e.preventDefault();
           }
         }}"
-      ></span>
+      />
       {#if display}
         <span>({display(value)})</span>
       {/if}
