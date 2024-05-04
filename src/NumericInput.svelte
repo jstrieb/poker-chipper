@@ -82,6 +82,14 @@
     pointerStart = { x: e.clientX, y: e.clientY };
   }
 
+  function reset() {
+    moveCount = 0;
+    queued = 0;
+    pointerStart = { x: 0, y: 0 };
+    deltaX.set(0);
+    initialValue = value;
+  }
+
   async function pointerup(e) {
     numInput.removeEventListener("pointermove", pointermove);
     numInput.releasePointerCapture(e.pointerId);
@@ -92,11 +100,7 @@
       e.preventDefault();
       editing = true;
     } else {
-      moveCount = 0;
-      queued = 0;
-      pointerStart = { x: 0, y: 0 };
-      deltaX.set(0);
-      initialValue = value;
+      reset();
     }
   }
 
@@ -160,11 +164,7 @@
         on:blur="{() => {
           value = parseInt(value || 0);
           editing = false;
-          moveCount = 0;
-          queued = 0;
-          pointerStart = { x: 0, y: 0 };
-          deltaX.set(0);
-          initialValue = value;
+          reset();
         }}"
         bind:input="{editable}"
         bind:value
