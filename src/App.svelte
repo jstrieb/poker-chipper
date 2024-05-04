@@ -402,10 +402,10 @@
         style="flex-grow: 1; width: 50%;"
         on:click="{() => {
           if (inputs.chipValues.length > 1) {
-            chipColors.pop();
             inputs.chipValues.pop();
-            chipColors = chipColors;
             inputs.chipValues = inputs.chipValues;
+            chipColors.pop();
+            chipColors = chipColors;
           }
         }}">Remove Color</Button
       >
