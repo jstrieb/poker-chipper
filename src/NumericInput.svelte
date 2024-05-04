@@ -161,6 +161,9 @@
     on:pointerdown="{pointerdown}"
     on:pointerup="{pointerup}"
     on:touchmove|capture|nonpassive="{touchmove}"
+    on:touchend|capture|nonpassive|preventDefault="{() => {
+      // Required to fix Android touch events unfocusing the input
+    }}"
   >
     <span
       style:transform="translate3d(calc({$deltaX} * ({boxWidth / 2}px -
@@ -171,7 +174,6 @@
   <div class="input" class:hidden="{!editing}">
     <GrowableInput
       inputmode="numeric"
-      tabindex="1"
       on:blur="{() => {
         value = parseInt(value || 0);
         editing = false;
