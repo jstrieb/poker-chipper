@@ -453,7 +453,7 @@
           round: [{ limit: 10, multiple: 1 }, { multiple: 5 }],
           initialScale: 10,
         }}"
-        min="1">Minimum Number of Chips Per Color</NumericInput
+        min="0">Minimum Number of Chips Per Color</NumericInput
       >
       <NumericInput
         bind:value="{settings.buyInRange}"
@@ -465,18 +465,19 @@
             { limit: 100, multiple: 25 },
             { multiple: 100 },
           ],
-          initialScale: 3,
+          initialScale: 0.5,
         }}"
         min="0">Buy In Range</NumericInput
       >
       <NumericInput
+        --expected-width="6ch"
         bind:value="{settings.maxChipPercent}"
         display="{(v) => `${percent(v)} of buy in`}"
         transforms="{{
           round: [{ limit: 5, multiple: 1 }, { multiple: 5 }],
           initialScale: 5,
         }}"
-        min="1"
+        min="0"
         max="100">Max Chip Upper Limit</NumericInput
       >
       <Details>

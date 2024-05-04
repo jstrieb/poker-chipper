@@ -148,8 +148,9 @@
       on:touchmove|capture|nonpassive="{touchmove}"
     >
       <span
-        style:transform="translate3d(calc({$deltaX} * ({boxWidth / 2}px - 4ch)),
-        0, 0)">{(display ?? ((x) => x))(value)}</span
+        style:transform="translate3d(calc({$deltaX} * ({boxWidth / 2}px -
+        var(--expected-width, 4ch))), 0, 0)"
+        >{(display ?? ((x) => x))(value)}</span
       >
     </div>
   {:else}
