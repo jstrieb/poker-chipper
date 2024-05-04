@@ -565,6 +565,7 @@
                     }
                     if (e.data && !e.data.match(/^[a-zA-Z]*$/)) {
                       e.preventDefault();
+                      e.target.blur();
                     }
                   }}"
                 />

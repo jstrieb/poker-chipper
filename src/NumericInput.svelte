@@ -31,6 +31,17 @@
     border: 2px solid var(--main-fg-color);
     box-shadow: 3px 3px 0 0 var(--main-fg-color);
   }
+
+  .hidden {
+    width: 0;
+    height: 0;
+    max-width: 0;
+    max-height: 0;
+    border: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
 </style>
 
 <script>
@@ -39,7 +50,6 @@
   import { compose, roundToNearest, scale, select } from "./helpers.js";
 
   import { spring } from "svelte/motion";
-  import { tick } from "svelte";
 
   export let value,
     transforms = {},
@@ -67,7 +77,7 @@
     return x / (1 + Math.abs(x));
   }
 
-  $: if (editable) {
+  $: if (editing) {
     editable.focus();
   }
 
@@ -83,6 +93,7 @@
   }
 
   function reset() {
+    editing = false;
     moveCount = 0;
     queued = 0;
     pointerStart = { x: 0, y: 0 };
@@ -143,44 +154,47 @@
 
 <div>
   <span class="label"><slot /></span>
-  {#if !editing}
-    <div
-      class="input"
-      bind:this="{numInput}"
-      on:pointerdown="{pointerdown}"
-      on:pointerup="{pointerup}"
-      on:touchmove|capture|nonpassive="{touchmove}"
+  <div
+    class="input"
+    class:hidden="{editing}"
+    bind:this="{numInput}"
+    on:pointerdown="{pointerdown}"
+    on:pointerup="{pointerup}"
+    on:touchmove|capture|nonpassive="{touchmove}"
+  >
+    <span
+      style:transform="translate3d(calc({$deltaX} * ({boxWidth / 2}px -
+      var(--expected-width, 4ch))), 0, 0)"
+      >{(display ?? ((x) => x))(value)}</span
     >
-      <span
-        style:transform="translate3d(calc({$deltaX} * ({boxWidth / 2}px -
-        var(--expected-width, 4ch))), 0, 0)"
-        >{(display ?? ((x) => x))(value)}</span
-      >
-    </div>
-  {:else}
-    <div class="input">
-      <GrowableInput
-        inputmode="numeric"
-        on:blur="{() => {
-          value = parseInt(value || 0);
-          editing = false;
-          reset();
-        }}"
-        bind:input="{editable}"
-        bind:value
-        on:focus="{select}"
-        on:beforeinput="{(e) => {
-          if (e.inputType === 'insertLineBreak') {
-            e.target.blur();
-          }
-          if (e.data && !e.data.match(/^[0-9]*$/)) {
-            e.preventDefault();
-          }
-        }}"
-      />
-      {#if display}
-        <span>({display(value)})</span>
-      {/if}
-    </div>
-  {/if}
+  </div>
+  <div class="input" class:hidden="{!editing}">
+    <GrowableInput
+      inputmode="numeric"
+      tabindex="1"
+      on:blur="{() => {
+        value = parseInt(value || 0);
+        editing = false;
+        reset();
+      }}"
+      bind:input="{editable}"
+      bind:value
+      on:focus="{(e) => {
+        editing = true;
+        select(e);
+      }}"
+      on:beforeinput="{(e) => {
+        if (e.inputType === 'insertLineBreak') {
+          e.target.blur();
+        }
+        if (e.data && !e.data.match(/^[0-9]*$/)) {
+          e.preventDefault();
+          e.target.blur();
+        }
+      }}"
+    />
+    {#if display}
+      <span>({display(value)})</span>
+    {/if}
+  </div>
 </div>
