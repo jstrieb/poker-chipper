@@ -413,73 +413,92 @@
 
     <Details>
       <span slot="summary">Advanced Options</span>
-      <NumericInput
-        bind:value="{settings.preferredMultiple}"
-        display="{dollars}"
-        transforms="{{
-          round: [{ limit: 10, multiple: 1 }, { multiple: 25 }],
-          initialScale: 3,
-        }}"
-        min="1">Preferred Value Multiple</NumericInput
-      >
-      <NumericInput
-        bind:value="{settings.preferredMultipleWeight}"
-        transforms="{{
-          round: [{ limit: 10, multiple: 1 }, { multiple: 5 }],
-          initialScale: 10,
-        }}"
-        min="0">Value Multiple Preference Weight</NumericInput
-      >
-      <NumericInput
-        bind:value="{settings.chipsValueMultiple}"
-        display="{dollars}"
-        transforms="{{
-          round: [{ limit: 5, multiple: 1 }, { multiple: 5 }],
-          initialScale: 3,
-        }}"
-        min="1">Required Value Multiple</NumericInput
-      >
-      <NumericInput
-        bind:value="{settings.chipsMultiple}"
-        transforms="{{
-          round: [{ limit: 10, multiple: 1 }, { multiple: 5 }],
-          initialScale: 10,
-        }}"
-        min="1">Quantity Multiple</NumericInput
-      >
-      <NumericInput
-        bind:value="{settings.minChipsPerColor}"
-        transforms="{{
-          round: [{ limit: 10, multiple: 1 }, { multiple: 5 }],
-          initialScale: 10,
-        }}"
-        min="0">Minimum Number of Chips Per Color</NumericInput
-      >
-      <NumericInput
-        bind:value="{settings.buyInRange}"
-        display="{(v) => `±${dollars(v)}`}"
-        transforms="{{
-          round: [
-            { limit: 5, multiple: 1 },
-            { limit: 25, multiple: 5 },
-            { limit: 100, multiple: 25 },
-            { multiple: 100 },
-          ],
-          initialScale: 0.5,
-        }}"
-        min="0">Buy In Range</NumericInput
-      >
-      <NumericInput
-        --expected-width="6ch"
-        bind:value="{settings.maxChipPercent}"
-        display="{(v) => `${percent(v)} of buy in`}"
-        transforms="{{
-          round: [{ limit: 5, multiple: 1 }, { multiple: 5 }],
-          initialScale: 5,
-        }}"
-        min="0"
-        max="100">Max Chip Upper Limit</NumericInput
-      >
+      <div style:margin="1em 0">
+        <p>
+          Poker Chipper picks the best chip values that meet certain
+          <b>requirements</b>. Each possible combination of chip values has a
+          <b>score</b>. Poker Chipper picks the combination with the highest
+          score.
+        </p>
+        <br />
+        <p>
+          The settings below either change the requirements or change how the
+          score is calculated.
+        </p>
+      </div>
+      <Details>
+        <span slot="summary">Requirements</span>
+        <NumericInput
+          bind:value="{settings.chipsValueMultiple}"
+          display="{dollars}"
+          transforms="{{
+            round: [{ limit: 5, multiple: 1 }, { multiple: 5 }],
+            initialScale: 3,
+          }}"
+          min="1">Required Value Multiple</NumericInput
+        >
+        <NumericInput
+          bind:value="{settings.chipsMultiple}"
+          transforms="{{
+            round: [{ limit: 10, multiple: 1 }, { multiple: 5 }],
+            initialScale: 10,
+          }}"
+          min="1">Quantity Multiple</NumericInput
+        >
+        <NumericInput
+          bind:value="{settings.minChipsPerColor}"
+          transforms="{{
+            round: [{ limit: 10, multiple: 1 }, { multiple: 5 }],
+            initialScale: 10,
+          }}"
+          min="0">Minimum Number of Chips Per Color</NumericInput
+        >
+        <NumericInput
+          bind:value="{settings.buyInRange}"
+          display="{(v) => `±${dollars(v)}`}"
+          transforms="{{
+            round: [
+              { limit: 5, multiple: 1 },
+              { limit: 25, multiple: 5 },
+              { limit: 100, multiple: 25 },
+              { multiple: 100 },
+            ],
+            initialScale: 0.5,
+          }}"
+          min="0">Buy In Range</NumericInput
+        >
+        <NumericInput
+          --expected-width="6ch"
+          bind:value="{settings.maxChipPercent}"
+          display="{(v) => `${percent(v)} of buy in`}"
+          transforms="{{
+            round: [{ limit: 5, multiple: 1 }, { multiple: 5 }],
+            initialScale: 5,
+          }}"
+          min="0"
+          max="100">Max Chip Upper Limit</NumericInput
+        >
+      </Details>
+      <Details>
+        <span slot="summary">Score</span>
+        <NumericInput
+          bind:value="{settings.preferredMultiple}"
+          display="{dollars}"
+          transforms="{{
+            round: [{ limit: 10, multiple: 1 }, { multiple: 25 }],
+            initialScale: 3,
+          }}"
+          min="1">Preferred Value Multiple</NumericInput
+        >
+        <NumericInput
+          bind:value="{settings.preferredMultipleWeight}"
+          transforms="{{
+            round: [{ limit: 10, multiple: 1 }, { multiple: 5 }],
+            initialScale: 10,
+          }}"
+          min="0">Preferred Value Multiple Score</NumericInput
+        >
+      </Details>
       <Details>
         <span slot="summary">Raw Optimizer Model</span>
         <p>Run the model with <a href="https://www.scipopt.org/">SCIP</a>.</p>
