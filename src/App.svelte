@@ -525,12 +525,12 @@
     <div class="table-container">
       <table>
         <tbody>
-          {#each solution ?? [] as { amount, value }, i}
+          {#each solution ?? [] as { amount, value, i }}
             <tr>
               <td>
                 <button
                   class="chip"
-                  style:--color="{chipColors[i].toLocaleLowerCase()}"
+                  style:--color="{chipColors[i]?.toLocaleLowerCase()}"
                   on:click="{(e) => e.target.nextElementSibling.focus()}"
                 ></button><GrowableInput
                   style="

@@ -250,6 +250,7 @@ export async function solve(inputs, settings) {
   const result = new Array(inputs.chipValues.length).fill().map((_, i) => ({
     amount: solution[`amount_color_${i}`] ?? 0,
     value: solution[`value_color_${i}`] ?? 0,
+    i,
   }));
   result.sort(({ value: a }, { value: b }) => b - a);
   return result;
