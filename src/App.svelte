@@ -365,7 +365,6 @@
             border-bottom: 2px solid var(--color, var(--main-fg-color)); 
             margin: 0 -0.1ch; 
             display: inline-block; 
-            height: 1em;
             line-height: 0.9;
           "
           --padding="0.3ch"
@@ -380,6 +379,7 @@
             }
             if (e.data && !e.data.match(/^[a-zA-Z]*$/)) {
               e.preventDefault();
+              e.target.blur();
             }
           }}"
         /> Chips</NumericInput
