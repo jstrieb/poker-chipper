@@ -1,3 +1,4 @@
 src/compiled/*
 compiled*
 *.svg
+README.md
