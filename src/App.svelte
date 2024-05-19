@@ -199,10 +199,10 @@
   $: debouncedStore("settings", settings);
 
   const urlParams = Array.from(new URL(window.location).searchParams.entries());
-  const solutionFromUrl = urlParams.map(([c, s]) => {
+  const solutionFromUrl = urlParams.map(([c, s], i) => {
     let [_, amount, value] = /(\d+)_(\d+)/.exec(s);
     (amount = parseInt(amount)), (value = parseInt(value));
-    return { amount, value };
+    return { amount, value, i };
   });
   let displayFromUrl = urlParams?.length;
   $: if (displayFromUrl) {
