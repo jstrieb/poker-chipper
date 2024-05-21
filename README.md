@@ -34,7 +34,7 @@ recomputed subject to the adjusted requirements.
 
 # How Poker Chipper Works
 
-Poker chipper uses mixed integer nonlinear programming (MINLP), which is a form
+Poker Chipper uses mixed integer nonlinear programming (MINLP), which is a form
 of constrained, nonconvex optimization, to optimally pick poker chip
 denominations. 
 
