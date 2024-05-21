@@ -1,9 +1,13 @@
 <!-- Try in vain to remove table borders -->
+<!--
 <table border="0" frame="void" rules="all"><tbody><tr>
+-->
 <td>
 
-<!-- If the surrounding table is removed, put align="left" back in the img -->
-<a href="https://jstrieb.github.io/poker-chipper" target="_blank"><img src="https://github.com/jstrieb/poker-chipper/blob/master/public/favicon.svg?raw=true" width="125" height="125" /></a>
+<!-- 
+  If the surrounding table is uncommented, remove align="left" from the img 
+-->
+<a href="https://jstrieb.github.io/poker-chipper" target="_blank"><img src="https://github.com/jstrieb/poker-chipper/blob/master/public/favicon.svg?raw=true" width="125" height="125" align="left" /></a>
 
 </td>
 <td>
@@ -15,7 +19,9 @@ select poker chip denominations for cash games using constrained, nonlinear
 optimization.</a>
 
 </td>
+<!--
 </tr></tbody></table>
+-->
 
 # About
 
@@ -23,23 +29,21 @@ Imagine hosting a small poker game. You know how many friends will attend, how
 many chips you have, and how much everyone will pay to play. How do you pick
 chip denominations?
 
-With Poker Chipper, picking chip denominations is fast and easy. Input the
-number of players, buy in, blinds, and number of chips. Then, wait a moment for
-the mathematically optimal results, which are guaranteed to work with the chips
-you have on-hand. Once the results are computed, they can easily be saved for
-next time, or shared with others. If you want to modify the results, adjust the
-"advanced options," and the chip denominations will be recomputed subject to
-the adjusted requirements.
+Without Poker Chipper, picking chip denominations is manual and error-prone.
+You first try to pick values that divide each other nicely and are easy to
+remember. (Alternatively, struggle to recall the values you used last time you
+played.) You next try to find a way to make the chosen values sum to the buy
+in. Then, you backtrack whenever there aren't enough chips for everyone, or
+when there are too many chips left over. Finally, you settle for a sub-optimal
+chip allocation so that you can actually start playing.
 
-Without Poker Chipper, on the other hand, picking chip denominations is manual
-and error-prone. You might pick values that grow sensibly, divide each other
-nicely, and are easy to remember. (Alternatively, struggle to recall the values
-you used last time you played.) You could use the chosen values to find an
-allocation of chips that sum to the buy in for a single player. Then, you would
-backtrack whenever either there aren't enough chips to distribute a full stack
-to everyone using the chosen allocation, or when there are too many chips left
-over. Finally, you might settle for a sub-optimal chip allocation so that you
-can actually get to playing.
+With Poker Chipper, on the other hand, picking chip denominations is fast and
+easy. Input the number of players, buy in, blinds, and number of chips. Then,
+wait a moment for the mathematically optimal results, which are guaranteed to
+work with the chips you have on-hand. Once the results are computed, you can
+save them for next time, or share them with others. If you want to modify the
+results, adjust the "advanced options," and the chip denominations will be
+recomputed subject to the adjusted requirements.
 
 # How Poker Chipper Works
 
