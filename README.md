@@ -1,27 +1,14 @@
-<!-- Try in vain to remove table borders -->
-<!--
-<table border="0" frame="void" rules="all"><tbody><tr>
--->
-<td>
+<h1>
 
-<!-- 
-  If the surrounding table is uncommented, remove align="left" from the img 
--->
 <a href="https://jstrieb.github.io/poker-chipper" target="_blank"><img src="https://github.com/jstrieb/poker-chipper/blob/master/public/favicon.svg?raw=true" width="125" height="125" align="left" /></a>
 
-</td>
-<td>
+Poker Chipper
 
-# Poker Chipper
+</h1>
 
 <a href="https://jstrieb.github.io/poker-chipper" target="_blank">Optimally
 select poker chip denominations for cash games using constrained, nonlinear
 optimization.</a>
-
-</td>
-<!--
-</tr></tbody></table>
--->
 
 # About
 
