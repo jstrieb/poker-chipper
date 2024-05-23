@@ -18,6 +18,7 @@ export function buildCip(
     minChipsPerColor,
     buyInRange,
     maxChipPercent,
+    previousValueMinMultiple,
   },
 ) {
   const chips = chipValues.map((v, i) => [`color_${i}`, v]);
@@ -76,7 +77,7 @@ export function buildCip(
     ]),
   );
   Object.entries(values).forEach(([color, { amount, value }]) => {
-    // Amounts and values must be greater than zero
+    // Amounts and values must be greater than a minimum
     addCons(`<${amount}>[I] >= ${minChipsPerColor}`);
     addCons(`<${value}>[I] >= 1`);
     // Chips above $1 must be multiples of $1
@@ -106,7 +107,9 @@ export function buildCip(
     const bigValue = values[bigColor].value;
     const smallValue = values[smallColor].value;
     // Actually impose the order on chip values
-    addCons(`<${bigValue}>[I] -<${smallValue}>[I] >= 1`);
+    addCons(
+      `<${bigValue}>[I] -${previousValueMinMultiple / 100}<${smallValue}>[I] >= 1`,
+    );
     // Everything being a multiple or factor of everything else is preferable,
     // but not required
     let m = mod(bigValue, smallValue);

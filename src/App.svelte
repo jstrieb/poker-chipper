@@ -189,6 +189,7 @@
     minChipsPerColor: 2,
     buyInRange: 0,
     maxChipPercent: 20,
+    previousValueMinMultiple: 125,
     ...loadFromLocalStorage("settings"),
   };
 
@@ -303,7 +304,7 @@
         <li>Drag or tap numbers to change their value</li>
         <li>Use the buttons to add or remove chip colors</li>
         <li>Tap any color to edit it</li>
-        <li>Expand "Advanced Options" to configure the solver</li>
+        <li>Expand "advanced options" to configure the solver</li>
         <li>Results are computed at the bottom</li>
       </ul>
     </div>
@@ -465,6 +466,19 @@
           }}"
           min="0"
           max="100">Largest Chip Upper Limit</NumericInput
+        >
+        <NumericInput
+          bind:value="{settings.previousValueMinMultiple}"
+          display="{(v) => `${percent(v)}`}"
+          transforms="{{
+            round: [
+              { limit: 5, multiple: 1 },
+              { limit: 10, multiple: 5 },
+              { multiple: 25 },
+            ],
+            initialScale: 5,
+          }}"
+          min="100">Value Increase Minimum</NumericInput
         >
       </Details>
       <Details>
