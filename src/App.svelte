@@ -190,6 +190,7 @@
     buyInRange: 0,
     maxChipPercent: 20,
     previousValueMinMultiple: 125,
+    chipsPairwiseMultipleWeight: 10,
     ...loadFromLocalStorage("settings"),
   };
 
@@ -469,7 +470,7 @@
         >
         <NumericInput
           bind:value="{settings.previousValueMinMultiple}"
-          display="{(v) => `${percent(v)}`}"
+          display="{percent}"
           transforms="{{
             round: [
               { limit: 5, multiple: 1 },
@@ -513,6 +514,20 @@
             initialScale: 0.5,
           }}"
           min="0">Buy In Range</NumericInput
+        >
+        <NumericInput
+          --expected-width="8ch"
+          bind:value="{settings.chipsPairwiseMultipleWeight}"
+          display="{(v) => `${percent(v)} of total chips`}"
+          transforms="{{
+            round: [
+              { limit: 5, multiple: 1 },
+              { limit: 25, multiple: 5 },
+              { multiple: 25 },
+            ],
+            initialScale: 5,
+          }}"
+          min="0">Score Bonus for Chip Value Divisibility</NumericInput
         >
       </Details>
       <Details>

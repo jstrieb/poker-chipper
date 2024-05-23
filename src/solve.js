@@ -19,6 +19,7 @@ export function buildCip(
     buyInRange,
     maxChipPercent,
     previousValueMinMultiple,
+    chipsPairwiseMultipleWeight,
   },
 ) {
   const chips = chipValues.map((v, i) => [`color_${i}`, v]);
@@ -118,7 +119,7 @@ export function buildCip(
       "[conjunction] <>: conjunction( " +
         [
           `<${m}>[I] == 0`,
-          `<${score}>[I] == ${Math.floor(chips.reduce((total, [_, v]) => total + v, 0) / 10)}`,
+          `<${score}>[I] == ${Math.floor(chips.reduce((total, [_, v]) => total + v, 0) * (chipsPairwiseMultipleWeight / 100))}`,
         ]
           .map(anonLinear)
           .join(", ") +
