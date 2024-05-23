@@ -203,9 +203,12 @@
   $: debouncedStore("inputs", { ...inputs, chipColors });
   $: debouncedStore("settings", settings);
 
-  const urlParams = Array.from(new URL(window.location).searchParams.entries());
+  const digitRegex = /(\d+)_(\d+)/;
+  const urlParams = Array.from(
+    new URL(window.location).searchParams.entries(),
+  ).filter(([_, s]) => digitRegex.exec(s) != null);
   const solutionFromUrl = urlParams.map(([c, s], i) => {
-    let [_, amount, value] = /(\d+)_(\d+)/.exec(s);
+    let [_, amount, value] = digitRegex.exec(s);
     (amount = parseInt(amount)), (value = parseInt(value));
     return { amount, value, i };
   });
@@ -663,7 +666,7 @@
     {:else if displayFromUrl}
       <Button
         on:click="{() => {
-          displayFromUrl = false;
+          window.location.search = '';
         }}">Calculate New Values</Button
       >
     {/if}
