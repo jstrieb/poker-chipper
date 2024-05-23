@@ -13,28 +13,26 @@ optimization.</a>
 # About
 
 Imagine hosting a small poker game. You know how many friends will attend, how
-many chips you have, and how much everyone will pay to play. How do you pick
-chip denominations?
+many chips you have, and the buy in. How do you pick chip denominations?
 
 Without Poker Chipper, picking chip denominations is manual and error-prone.
 You first try to pick values that divide each other nicely and are easy to
-remember. (Alternatively, struggle to recall the values you used last time you
+remember. (Alternatively, struggle to recall the values from the last time you
 played.) You next try to find a way to make the chosen values sum to the buy
 in. Then, you backtrack whenever there aren't enough chips for everyone, or
-when there are too many chips left over. Finally, you settle for a sub-optimal
+when there are too many chips left over. Finally, you settle for a suboptimal
 chip allocation so that you can actually start playing.
 
 With Poker Chipper, on the other hand, picking chip denominations is fast and
-easy. Input the number of players, buy in, blinds, and number of chips. Then,
-wait a moment for the mathematically optimal results, which are guaranteed to
-work with the chips you have on-hand. Once the results are computed, you can
-save them for next time, or share them with others. If you want to modify the
-results, adjust the "advanced options," and the chip denominations will be
-recomputed subject to the adjusted requirements.
+easy. Input the number of players, buy in, blinds, and number of chips. After
+waiting a moment for the mathematically optimal results, you can save them for
+next time, or share them with others. If you want to modify the results, adjust
+the "advanced options," and the chip denominations will be recomputed
+accordingly.
 
 # How Poker Chipper Works
 
-Poker Chipper uses mixed integer nonlinear programming (MINLP), which is a form
+Poker Chipper uses mixed-integer nonlinear programming (MINLP), which is a form
 of constrained, nonconvex optimization, to optimally pick poker chip
 denominations. 
 
@@ -42,10 +40,10 @@ Optimization is performed using a "solver" – in this case,
 [SCIP](https://www.scipopt.org/). Some inputs to Poker Chipper are translated
 into solver constraints, which affect what denominations are admissible. Other
 inputs influence the solver's objective function, which affects how candidate
-denominations are evaluated, ranked, and chosen. Inputs affecting constraints,
-and inputs affecting the objective function are described in the user interface
-as influencing the "requirements" and "score," respectively, of candidate
-solutions.
+denominations are evaluated, ranked, and chosen. In the user interface, inputs
+affecting constraints, and inputs affecting the objective function are
+described as influencing the "requirements" and "score," respectively, of
+candidate solutions.
 
 Poker Chipper is a fully static web application. In other words, all of the
 processing involved in performing optimization occurs client-side – entirely in
