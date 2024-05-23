@@ -137,6 +137,7 @@
 
 <script>
   import Button from "./Button.svelte";
+  import Checkbox from "./Checkbox.svelte";
   import Details from "./Details.svelte";
   import GrowableInput from "./GrowableInput.svelte";
   import NumericInput from "./NumericInput.svelte";
@@ -191,6 +192,8 @@
     maxChipPercent: 20,
     previousValueMinMultiple: 125,
     chipsPairwiseMultipleWeight: 10,
+    chipsAbove1Multiples1: true,
+    smallestChipSmallBlind: true,
     ...loadFromLocalStorage("settings"),
   };
 
@@ -480,6 +483,12 @@
             initialScale: 5,
           }}"
           min="100">Value Increase Minimum</NumericInput
+        >
+        <Checkbox bind:checked="{settings.chipsAbove1Multiples1}"
+          >Chips Above $1 are Multiples of $1</Checkbox
+        >
+        <Checkbox bind:checked="{settings.smallestChipSmallBlind}"
+          >Smallest Chip is Small Blind</Checkbox
         >
       </Details>
       <Details>
