@@ -45,7 +45,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 8em;
+    min-height: 16em;
   }
 
   .table-container {
@@ -635,7 +635,7 @@
               <td>total</td>
             </tr>
           {:else}
-            <div>No valid solution found!</div>
+            <div class="loading">No valid solution found!</div>
           {/if}
         </tbody>
       </table>
