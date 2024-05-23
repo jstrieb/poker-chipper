@@ -10,7 +10,7 @@
   }
 
   .label {
-    white-space: pre;
+    white-space: pre-wrap;
     margin-bottom: 2px;
     overflow: auto;
   }
