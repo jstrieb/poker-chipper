@@ -333,9 +333,7 @@
         ],
         initialScale: 1 / 10,
       }}"
-      min="100"
-      >{#if settings.buyInRange}Goal
-      {/if}Buy In</NumericInput
+      min="100">Buy In</NumericInput
     >
     <NumericInput
       bind:value="{inputs.blinds.big}"
