@@ -190,7 +190,7 @@
     minChipsPerColor: 2,
     buyInRange: 0,
     maxChipPercent: 20,
-    previousValueMinMultiple: 125,
+    previousValueMinMultiple: 25,
     chipsPairwiseMultipleWeight: 10,
     chipsAbove1Multiples1: true,
     smallestChipSmallBlind: true,
@@ -443,7 +443,7 @@
             round: [{ limit: 5, multiple: 1 }, { multiple: 5 }],
             initialScale: 3,
           }}"
-          min="1">Chip Value Multiple</NumericInput
+          min="1">Chip values must be multiples of:</NumericInput
         >
         <NumericInput
           bind:value="{settings.chipsMultiple}"
@@ -451,7 +451,7 @@
             round: [{ limit: 10, multiple: 1 }, { multiple: 5 }],
             initialScale: 10,
           }}"
-          min="1">Chip Quantity Multiple</NumericInput
+          min="1">Chip quantities must be multiples of:</NumericInput
         >
         <NumericInput
           bind:value="{settings.minChipsPerColor}"
@@ -459,7 +459,7 @@
             round: [{ limit: 10, multiple: 1 }, { multiple: 5 }],
             initialScale: 10,
           }}"
-          min="0">Minimum Number of Chips Per Color</NumericInput
+          min="0">Minimum number of chips per color:</NumericInput
         >
         <NumericInput
           --expected-width="6ch"
@@ -470,26 +470,27 @@
             initialScale: 5,
           }}"
           min="0"
-          max="100">Largest Chip Upper Limit</NumericInput
+          max="100">Largest chip value:</NumericInput
         >
         <NumericInput
           bind:value="{settings.previousValueMinMultiple}"
           display="{percent}"
           transforms="{{
             round: [
-              { limit: 5, multiple: 1 },
-              { limit: 10, multiple: 5 },
+              { limit: 10, multiple: 1 },
+              { limit: 25, multiple: 5 },
               { multiple: 25 },
             ],
             initialScale: 5,
           }}"
-          min="100">Value Increase Minimum</NumericInput
+          min="0"
+          >Successive chip values must increase by more than:</NumericInput
         >
         <Checkbox bind:checked="{settings.chipsAbove1Multiples1}"
-          >Chips Above $1 are Multiples of $1</Checkbox
+          >Chips above $1 must be multiples of $1</Checkbox
         >
         <Checkbox bind:checked="{settings.smallestChipSmallBlind}"
-          >Smallest Chip is Small Blind</Checkbox
+          >Smallest chip must equal the small blind</Checkbox
         >
       </Details>
       <Details>
@@ -498,10 +499,14 @@
           bind:value="{settings.preferredMultiple}"
           display="{dollars}"
           transforms="{{
-            round: [{ limit: 10, multiple: 1 }, { multiple: 25 }],
+            round: [
+              { limit: 10, multiple: 1 },
+              { limit: 25, multiple: 5 },
+              { multiple: 25 },
+            ],
             initialScale: 3,
           }}"
-          min="1">Preferred Chip Value Multiple</NumericInput
+          min="1">Prefer chip values to be multiples of:</NumericInput
         >
         <NumericInput
           bind:value="{settings.preferredMultipleWeight}"
@@ -509,7 +514,10 @@
             round: [{ limit: 10, multiple: 1 }, { multiple: 5 }],
             initialScale: 10,
           }}"
-          min="0">Score Bonus for Preferred Value Multiples</NumericInput
+          min="0"
+          >Score bonus per chip value that is a multiple of {dollars(
+            settings.preferredMultiple,
+          )}:</NumericInput
         >
         <NumericInput
           bind:value="{settings.buyInRange}"
@@ -523,7 +531,7 @@
             ],
             initialScale: 0.5,
           }}"
-          min="0">Buy In Range</NumericInput
+          min="0">Buy in range:</NumericInput
         >
         <NumericInput
           --expected-width="8ch"
@@ -537,7 +545,8 @@
             ],
             initialScale: 5,
           }}"
-          min="0">Score Bonus for Chip Value Divisibility</NumericInput
+          min="0"
+          >Score bonus per chip value that is a multiple of another:</NumericInput
         >
       </Details>
       <Details>

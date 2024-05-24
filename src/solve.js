@@ -113,7 +113,7 @@ export function buildCip(
     const smallValue = values[smallColor].value;
     // Actually impose the order on chip values
     addCons(
-      `<${bigValue}>[I] -${previousValueMinMultiple / 100}<${smallValue}>[I] >= 1`,
+      `<${bigValue}>[I] -${1 + previousValueMinMultiple / 100}<${smallValue}>[I] >= 1`,
     );
     // Everything being a multiple or factor of everything else is preferable,
     // but not required
