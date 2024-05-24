@@ -29,12 +29,12 @@ export function buildCip(
   const variables = [],
     constraints = [];
 
-  function addVar(name, objective) {
+  function addVar(name, objective, negative) {
     if (name == null) {
       name = `x${variables.length + 1}`;
     }
     variables.push(
-      `  [integer] <${name}>: obj=${objective ? 1 : 0}, original bounds=[0,+inf]`,
+      `  [integer] <${name}>: obj=${objective ? 1 : 0}, original bounds=[${negative ? "-inf" : "0"},+inf]`,
     );
     return name;
   }
@@ -160,26 +160,31 @@ export function buildCip(
     `<${values[orderedColors[0]].value}>[I] <= ${(buyIn * maxChipPercent) / 100}`,
   );
 
-  if (blinds && smallestChipSmallBlind) {
-    const { small } = blinds;
+  if (smallestChipSmallBlind) {
     // The smallest valued chip should be equal to the small blind
     addCons(
-      `<${values[orderedColors[orderedColors.length - 1]].value}>[I] == ${small}`,
+      `<${values[orderedColors[orderedColors.length - 1]].value}>[I] == ${blinds.small}`,
     );
   }
-  // We should be able to create the big blind from (at most) a couple of one of
-  // the types of chips
-  addDisjunction(
-    Object.entries(values)
-      .map(([_, { value }]) => {
-        return [
-          `<${value}>[I] == ${blinds.big}`,
-          `<${value}>[I] * 2 == ${blinds.big}`,
-          `<${value}>[I] * 3 == ${blinds.big}`,
-        ];
-      })
-      .flat()
-      .map(anonLinear),
+  // We should be able to create the big blind from some number of chips, and we
+  // want to minimize that number
+  const bigBlindPartCounts = Object.fromEntries(
+    Object.entries(values).map(([color, { amount }]) => {
+      const count = addVar();
+      addCons(`<${amount}>[I] - <${count}>[I] >= 0`);
+      return [color, count];
+    }),
+  );
+  addCons(
+    Object.entries(bigBlindPartCounts)
+      .map(([color, count]) => `<${count}>[I] * <${values[color].value}>[I]`)
+      .join(" + ") + ` == ${blinds.big}`,
+    "nonlinear",
+  );
+  addCons(
+    Object.values(bigBlindPartCounts)
+      .map((c) => `<${c}>[I]`)
+      .join(" + ") + ` + <${addVar(undefined, 1, true)}>[I] == 0`,
   );
 
   // The chips given to each person must sum to the buy in
