@@ -30,7 +30,7 @@
   ],
   "background_color": "#fff",
   "categories": [],
-  "description": "Optimally allocate poker chips using constrained, nonlinear optimization",
+  "description": "Optimally select poker chip denominations for cash games using constrained, nonlinear optimization.",
   "file_handlers": [],
   "launch_handler": {
     "client_mode": [
