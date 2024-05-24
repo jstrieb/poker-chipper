@@ -33,12 +33,7 @@
   "description": "Optimally select poker chip denominations for cash games using constrained, nonlinear optimization.",
   "file_handlers": [],
   "launch_handler": {
-    "client_mode": [
-      "navigate-existing",
-      "focus-existing",
-      "navigate-new",
-      "auto"
-    ]
+    "client_mode": ["navigate-new", "auto"]
   },
   "orientation": "any",
   "protocol_handlers": [],
