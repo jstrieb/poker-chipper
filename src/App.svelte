@@ -284,7 +284,7 @@
     return (
       solution
         .map(
-          ({ amount, value }, i) =>
+          ({ amount, value, i }) =>
             `${titleCase(chipColors[i])}: ${amount} chips x ${dollars(value)} each = ${dollars(amount * value)}`,
         )
         .join("\n") +
@@ -654,7 +654,9 @@
         <Button
           style="flex-grow: 1; width: 50%;"
           on:click="{async () => {
-            navigator.clipboard?.writeText(urlForSolution(solution));
+            navigator.clipboard?.writeText(
+              solutionText(solution) + '\n' + urlForSolution(solution),
+            );
           }}">Copy Link to Results</Button
         >
         {#if navigator.share}
