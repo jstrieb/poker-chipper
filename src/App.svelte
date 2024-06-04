@@ -186,7 +186,7 @@
     chipsValueMultiple: 5,
     chipsMultiple: 1,
     preferredMultiple: 25,
-    preferredMultipleWeight: 1,
+    preferredMultipleWeight: 5,
     minChipsPerColor: 2,
     buyInRange: 0,
     maxChipPercent: 20,
@@ -657,7 +657,7 @@
             navigator.clipboard?.writeText(
               solutionText(solution) + '\n' + urlForSolution(solution),
             );
-          }}">Copy Link to Results</Button
+          }}">Copy Results</Button
         >
         {#if navigator.share}
           <Button
