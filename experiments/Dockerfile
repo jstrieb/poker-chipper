@@ -1,4 +1,4 @@
-FROM debian:latest
+FROM debian:bookworm-slim
 
 RUN apt-get update \
   && apt-get install -y \
@@ -13,43 +13,21 @@ RUN apt-get update \
   automake \
   autoconf \
   libtool \
-  pkg-config \
-  neovim \
-  less \
-  wget
+  pkg-config
 
 WORKDIR /
 RUN git clone https://github.com/emscripten-core/emsdk.git
 WORKDIR /emsdk
-RUN ./emsdk install latest \
-  && ./emsdk activate latest \
+RUN ./emsdk install 3.1.56 \
+  && ./emsdk activate 3.1.56 \
   && echo '. "/emsdk/emsdk_env.sh"' >> /root/.bashrc
 
 ENV PATH="/emsdk:/emsdk/upstream/emscripten:${PATH}"
 
-# WORKDIR /
-# RUN git clone https://github.com/Microsoft/vcpkg.git
-# WORKDIR /vcpkg
-# RUN ./bootstrap-vcpkg.sh -disableMetrics
-# ENV PATH="${PATH}:/vcpkg"
-
-# WORKDIR /
-# RUN wget 'https://gmplib.org/download/gmp/gmp-6.3.0.tar.lz' \
-  # && tar -xvJf gmp-6.3.0.tar.lz
-# WORKDIR /gmp-6.3.0
-# RUN ./configure \
-  # && make -j
-# RUN emconfigure ./configure --disable-assembly --host none --enable-cxx \
-  # && sed -i'.bak' 's/#define GMP_LIMB_BITS[ \t]*32/#define GMP_LIMB_BITS 64/g' 'gmp.h' \
-  # && emmake make -j \
-  # && emmake make install
-
 WORKDIR /
-RUN curl -o 'scipoptsuite-8.1.0.tgz' 'https://scipopt.org/download/release/scipoptsuite-8.1.0.tgz' \
-  && tar -xvzf scipoptsuite-8.1.0.tgz
+RUN curl 'https://scipopt.org/download/release/scipoptsuite-8.1.0.tgz' | tar -xvz
 
 WORKDIR /scipoptsuite-8.1.0
-# RUN vcpkg install gmp:wasm32-emscripten
 ENV CXXFLAGS="-sINVOKE_RUN=0 -sFILESYSTEM=1 -sFORCE_FILESYSTEM=1 -sMODULARIZE=1 -sEXPORT_NAME=createSCIP -sEXPORTED_RUNTIME_METHODS=FS,callMain -sEXPORT_ES6=1 -sWASM=2 -sEXCEPTION_STACK_TRACES=1 -sDISABLE_EXCEPTION_CATCHING=0"
 RUN mkdir build \
   && cd build \
